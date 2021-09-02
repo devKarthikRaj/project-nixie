@@ -27,7 +27,8 @@ This project contains a custom written library specific to our custom-built Nixi
 
 ### [Software](https://github.com/devKarthikRaj/project-nixie/tree/master/Software) <br>
 [Android App](https://github.com/devKarthikRaj/project-nixie/tree/master/Software) <br>
-Our Nixie Tube clock can be controlled through NixieCon. NixeCon connects to the hardware via Bluetooth.
+
+Our Nixie Tube clock can be controlled through our Android app - NixieCon. NixeCon connects to the hardware via Bluetooth.
 
 #### Get the app!
 <div align="center">
