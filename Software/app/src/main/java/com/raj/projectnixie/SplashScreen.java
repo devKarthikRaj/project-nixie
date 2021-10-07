@@ -87,7 +87,8 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
 
         //Bind to BluetoothConnectionService
         Intent serviceIntent = new Intent(this, BluetoothConnectionService.class);
-        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        startService(serviceIntent); //Only need to start service once... put this in the activity where you start the service
+        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE); //this has to be done in all activities that bind to the service
 
         // Initialize recycler view adapter and layout manager
         //-
@@ -292,9 +293,7 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
 
         //What happens when we unbind from the service...
         @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
-        }
+        public void onServiceDisconnected(ComponentName name) { isBound = false; }
     };
 
     public void openDialog() {
@@ -307,11 +306,11 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
     //pop up dialog is sent to the applyTexts method through which it is accessed by the main activity
     @Override
     public void applyTexts(String alertDialogResult) {
-        //If alertDialogResult is cancel... User has pressed cancel button to cancel connection... So disconnect from hardware!
+        //If alertDialogResult is cancelled... User has pressed cancel button to cancel connection... So disconnect from hardware!
         if(alertDialogResult.equals("cancel")) {
             disconnect();
         }
-        //If alertDialogResult is not cancel... Which means the user has entered some verification code inside...
+        //If alertDialogResult is not cancelled... Which means the user has entered some verification code inside...
         mBluetoothConnectionService.write(alertDialogResult.getBytes(Charset.defaultCharset()));
     }
 }

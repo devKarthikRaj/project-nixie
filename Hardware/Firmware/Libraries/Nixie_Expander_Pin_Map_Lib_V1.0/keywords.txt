@@ -1,2 +1,0 @@
-getNixieExpanderPin	KEYWORD1
-getPinNumber	KEYWORD2

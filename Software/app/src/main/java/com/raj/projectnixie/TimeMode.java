@@ -61,9 +61,11 @@ public class TimeMode extends AppCompatActivity implements View.OnClickListener 
         scaleUp = AnimationUtils.loadAnimation(this,R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(this,R.anim.scale_down);
 
-        //Bind to BluetoothConnectionService
-        Intent serviceIntent = new Intent(this, BluetoothConnectionService.class);
-        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        if(!isBound) {
+            //Bind to BluetoothConnectionService
+            Intent serviceIntent = new Intent(this, BluetoothConnectionService.class);
+            bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
+        }
 
         manualTimeBtn.setOnClickListener(this);
         systemTimeBtn.setOnClickListener(this);
@@ -122,7 +124,7 @@ public class TimeMode extends AppCompatActivity implements View.OnClickListener 
                 //Put everything that has to be sent over the bt link into a nice byte array in ascii
                 byte[] sendTime = ("T:"+String.valueOf(setHour)+":"+String.valueOf(setMin)+":"+String.valueOf(setSec)).getBytes(Charset.defaultCharset());
                 mBluetoothConnectionService.write(sendTime);
-                Log.d(TAG, (String.valueOf(setHour)+":"+String.valueOf(setMin)+":"+String.valueOf(setSec)));
+                Log.d(TAG, "T:"+String.valueOf(setHour)+":"+String.valueOf(setMin)+":"+String.valueOf(setSec));
                 break;
         }
     }
