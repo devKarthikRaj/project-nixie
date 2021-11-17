@@ -32,13 +32,11 @@ Our Nixie Tube clock can be controlled through our Android app - NixieCon. NixeC
 
 #### Get the app!
 <div align="center">
-	<div class="clearfix">
-	  <div class="img-container">
+	<p float="left">
 		<img src="https://drive.google.com/uc?export=view&id=1HyYBXJ0fQLPbphzMWAkY_Zig-mV50mGT" height="300"> 
 		<img src="https://drive.google.com/uc?export=view&id=1I7a_C3IQ5gpD9yG2XNPnXy6p5Sw_wXa3" height="300"> 
 		<img src="https://drive.google.com/uc?export=view&id=1HyexAPifqvR2obPhjKel27XPyoyMqOuk" height="300">
-      </div>
-	</div>
+	</p>
 	<div>
 		<a href="https://play.google.com/store/apps/details?id=com.raj.projectnixiev3">
 			<img src="https://drive.google.com/uc?export=view&id=1hqWEkSeNjhhtVZcWNqooTvevPk3sEfvX" alt="Get it on the play store" class="center">
