@@ -1,7 +1,7 @@
 # Project Nixie
 This repository contains hardware and software documentation for a Nixie tube clock created by two engineer wannabes! <br>
 
-![Product Image](https://drive.google.com/uc?export=view&id=1ISCZ87VOQUT8qHJg4DFFtxaFQR4g-VNW)
+<img alt="Product Image" src="https://drive.google.com/uc?export=view&id=1ISCZ87VOQUT8qHJg4DFFtxaFQR4g-VNW">
 
 ### A lil bit of history...
 Nixie Tubes were used back in the day in most displays until the world was taken over by LEDs (Light Emitting Diodes). Nixies were invented in Hungary and largely used in the Soviet Union in the 1950s. Nixies are not mass produced anymore! <br>
