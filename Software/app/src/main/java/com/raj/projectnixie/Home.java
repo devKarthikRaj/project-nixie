@@ -31,8 +31,6 @@ public class Home extends AppCompatActivity implements OnClickListener {
     Animation scaleUp;
     Animation scaleDown;
 
-    SwitchMaterial disableBtVeriSs;
-
     //The code in this broadcast receiver will execute when bt has been turned off
     //This broadcast receiver will not be unregistered once once started as it has to work in other activities as well
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
@@ -87,32 +85,8 @@ public class Home extends AppCompatActivity implements OnClickListener {
         countdownModeBtn.setOnClickListener(this);
         ledControlBtn.setOnClickListener(this);
 
-        disableBtVeriSs = findViewById(R.id.SlideSwitch_Disable_Bt_Verification);
-
         //Init shared preferences
         SharedPreferences sp = getSharedPreferences("btVeriEnSp", MODE_PRIVATE);
-
-        //Set inital state of toggle switch based on data stored in shared preferences
-        disableBtVeriSs.setChecked(sp.getBoolean("btVeriEn", false));
-
-
-        disableBtVeriSs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //Config shared preferences for editing
-                SharedPreferences.Editor editor = sp.edit();
-
-                if (isChecked) {
-                    editor.putBoolean("btVeriEn", true);
-                    editor.apply();
-                    Toast.makeText(getApplicationContext(), "Bluetooth verification disabled", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    editor.putBoolean("btVeriEn", false);
-                    editor.apply();
-                    Toast.makeText(getApplicationContext(), "Bluetooth verification enabled", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
     }
 
     @Override

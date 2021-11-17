@@ -248,30 +248,22 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
                 ch[i] = incomingMessage.charAt(i);
             }
 
-
             //Level 1 Check (Refer to software documentation for security verification procedure)
             if(ch[0]=='R' && ch[1]=='E' && ch[2]=='Q' && ch[3]=='_' && ch[4]=='C' && ch[5]=='H' && ch[6]=='E' && ch[7]=='C' && ch[8]=='K' && ch[9]=='_' && ch[10]=='1') {
                 mBluetoothConnectionService.write(("REQ_CONN").getBytes(Charset.defaultCharset()));
             }
 
-            //Level 2 Check
-            if(ch[0]=='R' && ch[1]=='E' && ch[2]=='Q' && ch[3]=='_' && ch[4]=='C' && ch[5]=='H' && ch[6]=='E' && ch[7]=='C' && ch[8]=='K' && ch[9]=='_' && ch[10]=='2') {
-                //Open a pop up dialog for user to enter verification code
-                openDialog();
-            }
-
-            //Level 2 Check Pass
+            //Level 1 Check Pass
             if(ch[0]=='C' && ch[1]=='O' && ch[2]=='N' && ch[3]=='N' && ch[4]=='_' && ch[5]=='P' && ch[6]=='A' && ch[7]=='S' && ch[8]=='S') {
                 Toast.makeText(getApplicationContext(),"Successfully connected to Nixie Clock!",Toast.LENGTH_SHORT).show();
                 //Go to home activity
                 startActivity(new Intent(getApplicationContext(), Home.class));
             }
 
-            //Level 2 Check Fail
+            //Level 1 Check Fail
             if(ch[0]=='C' && ch[1]=='O' && ch[2]=='N' && ch[3]=='N' && ch[4]=='_' && ch[5]=='F' && ch[6]=='A' && ch[7]=='I' && ch[8]=='L') {
                 mBluetoothConnectionService.write(("REQ_CONN").getBytes(Charset.defaultCharset()));
-                Toast.makeText(getApplicationContext(),"Verification Code Incorrect... Please Re-enter!!!",Toast.LENGTH_LONG).show();
-                openDialog();
+                Toast.makeText(getApplicationContext(),"Re-connecting with hardware!",Toast.LENGTH_SHORT).show();
             }
         }
     };

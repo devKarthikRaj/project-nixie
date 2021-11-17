@@ -262,7 +262,7 @@ void disableSubsystems() {
 //Returns false = security verification unsuccessful
 bool VerifyBtConnection() {
   int state = 0; //Set the starting state of the state machine
-  for(int i=0; i<3; i++) {
+  for(int i=0; i<2; i++) {
     switch(state) {
       case 0:
       //Hang here till a remote device connects...
@@ -286,41 +286,20 @@ bool VerifyBtConnection() {
       }
       
       if(espBt.readString() == "REQ_CONN") {
-        Serial.println("Level 1 Pass");
-        espBt.print("REQ_CHECK_2"); //Tell hardware that level 1 verification is successful and send level 2 verification
-        state = 1; 
+        Serial.println("Level 1 Pass - Connection Pass");
+        espBt.print("CONN_PASS"); //Tell the hardware that level 1 verification is successful... Let the connection thru 
+        state = 1;
       }
       else {
         Serial.println("Level 1 Fail");
         state = 0;
       }
       break;
-      
-      case 1:
-      //Hang here till Level 2 verification key is received... (keyed in by user)
-      Serial.println("Waiting for Level 2 verification key from remote device");
-      while(!espBt.available()) {
-        digitalWrite(comLed,HIGH);
-        delay(50);
-        digitalWrite(comLed,LOW);
-        delay(50);
-      }
 
-      if(espBt.readString() == uniqueCode) {
-        Serial.println("Level 2 Pass");
-        espBt.print("CONN_PASS"); //Tell the hardware that level 2 verification is successful 
-        state = 2;
-      }
-      else {
-        Serial.println("Level 2 Fail");
-        espBt.print("CONN_FAIL"); //Tell the hardware that level 2 verification is unsuccessful
-        state = 0;
-      }
-      break;
-  
-      case 2:
+      case 1: 
       return true;
-      break;
+
+      //Other BT verification cases (for user bt verification) have been removed
     }
   }
 }

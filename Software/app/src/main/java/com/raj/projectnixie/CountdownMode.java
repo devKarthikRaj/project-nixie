@@ -86,9 +86,7 @@ public class CountdownMode extends AppCompatActivity implements View.OnClickList
                 dispOnNixieBtn.startAnimation(scaleDown);
 
                 //If the user has not entered anything...
-                if(EThour.getText()!=null && !EThour.getText().toString().equals("hours")
-                && ETmin.getText()!=null && !ETmin.getText().toString().equals("Mins")
-                && ETsec.getText()!=null && !ETsec.getText().toString().equals("Secs")) {
+                if(!EThour.getText().toString().equals("") && !ETmin.getText().toString().equals("") && !ETsec.getText().toString().equals("")) {
                     //If the user entry is valid...
                     if(Integer.parseInt(EThour.getText().toString()) < 100 && Integer.parseInt(EThour.getText().toString()) >= 0
                     && Integer.parseInt(ETmin.getText().toString()) < 60 && Integer.parseInt(ETmin.getText().toString()) >= 0
@@ -101,6 +99,9 @@ public class CountdownMode extends AppCompatActivity implements View.OnClickList
                     else {
                         Toast.makeText(getApplicationContext(),"Enter a Valid Time to Countdown From !!!", Toast.LENGTH_SHORT).show();
                     }
+                }
+                else if(EThour.getText().toString().equals("Hours") || !ETmin.getText().toString().equals("Mins")) {
+                    Toast.makeText(getApplicationContext(),"Fill in all the fields !!!", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Toast.makeText(getApplicationContext(),"Enter a Time to Countdown From !!!", Toast.LENGTH_SHORT).show();
