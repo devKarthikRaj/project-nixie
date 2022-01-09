@@ -31,6 +31,10 @@ This project contains a custom written library specific to our custom-built Nixi
 Our Nixie Tube clock can be controlled through our Android app - NixieCon. NixeCon connects to the hardware via Bluetooth.
 
 #### Get the app!
+[Screenshot_Home](https://drive.google.com/uc?export=view&id=1HyYBXJ0fQLPbphzMWAkY_Zig-mV50mGT)
+[Screenshot_Time](https://drive.google.com/uc?export=view&id=1I7a_C3IQ5gpD9yG2XNPnXy6p5Sw_wXa3)
+[Screenshot_LED](https://drive.google.com/uc?export=view&id=1HyexAPifqvR2obPhjKel27XPyoyMqOuk)
+
 <div align="center">
 	<p float="left">
 		<img src="https://drive.google.com/uc?export=view&id=1HyYBXJ0fQLPbphzMWAkY_Zig-mV50mGT" height="300"> 
