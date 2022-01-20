@@ -13,24 +13,34 @@ Please contact the developers for information regarding purchase of the clock <b
 
 ___
 
-## Contents
-### [Hardware](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware) 
+## Description
+
+Our Nixie clock is designed from the ground up with individual drivers for every digit (no multiplexing), Wi-Fi/BLE, built-in timekeeping, and ruggedized power supply. The custom firmware drivers allow for full dimming and/or crossfading control of the digits. Users can also customize the firmware to suit their needs. <br>
+
+The clock is housed in a 3D printed dark grey nylon enclosure, providing a high quality feel and look. <br>
+
+
+
+### Notable Features
+- Wi-Fi/BLE for NTP sync/smart home functionality
+- Dual core RISC CPU (ESP32) for complex tasks
+- High accuracy RTC with TCXO to accurately keep track of time once sync'ed
+- High efficiency, rugged power components to ensure long service life
+- Individually addressible RGB tube illumination
+- Individually driven digits which make crossfading or other such effects light on I/O as compared to multiplexed
+
+### Links
+[Hardware](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware) 
 [Firmware](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Firmware) <br>
 [Hardware Documentation](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Hardware%20Documentation) <br>
+[Software/App](https://github.com/devKarthikRaj/project-nixie/tree/master/Software) <br>
 
-Our Nixie clock is designed from the ground up with individual drivers for every digit (no multiplexing), Wi-Fi/BLE, high accuracy RTC with TCXO, and ruggedized power supply components for a long service life. The custom firmware drivers allow for full dimming and/or crossfading control of the digits. <br>
 
-##### Additional Notes
-Libraries for the firmware used in this project are located [here](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Firmware/Libraries) and have to be put into the Arduino's library folder before compiling the code. <br>
 
-This project contains a custom written library specific to our custom-built Nixie hardware as well as a few open source libraries downloaded off the internet.
 
-### [Software](https://github.com/devKarthikRaj/project-nixie/tree/master/Software) <br>
-[Android App](https://github.com/devKarthikRaj/project-nixie/tree/master/Software) <br>
 
+### Android App Control
 Our Nixie Tube clock can be controlled through our Android app - NixieCon. NixeCon connects to the hardware via Bluetooth.
-
-#### Get the app!
 <div align="center">
 	<p float="left">
 		<img src="https://drive.google.com/uc?export=view&id=1HyYBXJ0fQLPbphzMWAkY_Zig-mV50mGT" height="300"> 
@@ -54,3 +64,5 @@ ___
 ## Developers
 [Karthik Raj](https://github.com/devKarthikRaj) <br>
 [Edward Tan](https://github.com/edward62740)
+
+Released under the AGPL-3.0 License
