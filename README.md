@@ -18,7 +18,7 @@ ___
 [Firmware](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Firmware) <br>
 [Hardware Documentation](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Hardware%20Documentation) <br>
 
-Our custom built Nixie hardware is built around the ESP32 chip on a 4-layer PCB. The firmware uses interrupts and also takes advantage of the ESP32's dual core functionality. The enclosure for the PCB is 3d-printed PA 12. <br>
+Our custom built Nixie hardware is built around the ESP32 chip on a 4 layer PCB. The firmware uses interrupts and also takes advantage of the ESP32's dual core functionality. The enclosure for the PCB is 3d-printed PA 12. <br>
 
 ##### Additional Notes
 Libraries for the firmware used in this project are located [here](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Firmware/Libraries) and have to be put into the Arduino's library folder before compiling the code. <br>
