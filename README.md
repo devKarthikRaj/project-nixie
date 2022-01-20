@@ -1,5 +1,5 @@
 # Project Nixie
-This repository contains hardware and software documentation for a Nixie tube clock created by two engineer wannabes! <br>
+This repository contains hardware and software documentation for a Nixie tube clock created by two engineering students! <br>
 
 ![Cover Image](https://drive.google.com/uc?export=view&id=1ISCZ87VOQUT8qHJg4DFFtxaFQR4g-VNW)
 
@@ -9,7 +9,7 @@ Nixie Tubes were used back in the day in most displays until the world was taken
 ### Featuring our contraption...
 Fret not! We have brought this relic back to life with our custom-built Nixie hardware. Our contraption can display time and also countdown from a set time. It comes with multi-color backlighting too! You can control the time, countdown, and lighting through a mobile app developed by us as well! <br>
 
-[Our product is currently unavailable for purchase] <br>
+Please contact the developers for information regarding purchase of the clock <br>
 
 ___
 
@@ -18,7 +18,7 @@ ___
 [Firmware](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Firmware) <br>
 [Hardware Documentation](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Hardware%20Documentation) <br>
 
-Our custom built Nixie hardware is built around the ESP32 chip on a 4-layer PCB. The firmware uses interrupts and also takes advantage of the ESP32's dual core functionality. The enclosure for the PCB is 3d-printed PA 12. <br>
+Our Nixie clock is designed from the ground up with individual drivers for every digit (no multiplexing), Wi-Fi/BLE, high accuracy RTC with TCXO, and ruggedized power supply components for a long service life. The custom firmware drivers allow for full dimming and/or crossfading control of the digits. <br>
 
 ##### Additional Notes
 Libraries for the firmware used in this project are located [here](https://github.com/devKarthikRaj/project-nixie/tree/master/Hardware/Firmware/Libraries) and have to be put into the Arduino's library folder before compiling the code. <br>
@@ -48,9 +48,9 @@ ___
 
 ## What's in it for you? <br>
 If you are developing anything Nixie related, feel free use the hardware and software documentation here!
-
+The hardware and software can be easily reused/adapted for similar projects.
 ___ 
 
 ## Developers
-[Edward Tan](https://github.com/edward62740) <br>
-[Karthik Raj](https://github.com/devKarthikRaj)
+[Karthik Raj](https://github.com/devKarthikRaj) <br>
+[Edward Tan](https://github.com/edward62740)
