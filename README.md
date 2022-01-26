@@ -1,7 +1,7 @@
 # Project Nixie
 This repository contains hardware and software documentation for a Nixie tube clock created by two engineering students! <br>
 
-![Cover Image](https://drive.google.com/uc?export=view&id=1ISCZ87VOQUT8qHJg4DFFtxaFQR4g-VNW)
+![Cover Image](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/Clock%20Hardware%20v1.jpg)
 ![Cover Image](https://github.com/devKarthikRaj/project-nixie/blob/master/Hardware/clock.jpeg)
 
 ### A lil bit of history...
@@ -41,19 +41,12 @@ The clock is housed in a 3D printed dark grey nylon enclosure, providing a high 
 
 
 ### Android App Control
-Our Nixie Tube clock can be controlled through our Android app - NixieCon. NixeCon connects to the hardware via Bluetooth.
-<div align="center">
-	<p float="left">
-		<img src="https://drive.google.com/uc?export=view&id=1HyYBXJ0fQLPbphzMWAkY_Zig-mV50mGT" height="300"> 
-		<img src="https://drive.google.com/uc?export=view&id=1I7a_C3IQ5gpD9yG2XNPnXy6p5Sw_wXa3" height="300"> 
-		<img src="https://drive.google.com/uc?export=view&id=1HyexAPifqvR2obPhjKel27XPyoyMqOuk" height="300">
-	</p>
-	</p>
-		<a href="https://play.google.com/store/apps/details?id=com.raj.projectnixiev3">
-			<img src="https://drive.google.com/uc?export=view&id=1hqWEkSeNjhhtVZcWNqooTvevPk3sEfvX" class="center">
-		</a>
-	</p>
-</div>
+Our Nixie Tube clock can be controlled through our Android app - NixieCon. NixeCon connects to the hardware via Bluetooth.<br>
+
+![App Home](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Home.jpg)
+![App Time Mode](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Time%20Mode.jpg)
+![App Countdown Mode](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Countdown%20Mode.jpg)
+![App LED Control](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20LED%20Control.jpg)
 
 ___ 
 
