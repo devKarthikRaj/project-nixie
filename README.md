@@ -43,7 +43,7 @@ The clock is housed in a 3D printed dark grey nylon enclosure, providing a high 
 ### Android App Control
 Our Nixie Tube clock can be controlled through our Android app - NixieCon. NixeCon connects to the hardware via Bluetooth.<br>
 
-<div style="text-align:center">
+<div align="center">
 <img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Home.jpg" alt="App Home" height="300" />
 <img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Time%20Mode.jpg" alt="App Time Mode" height="300" />
 <img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Countdown%20Mode.jpg" alt="App Countdown Mode" height="300" />
