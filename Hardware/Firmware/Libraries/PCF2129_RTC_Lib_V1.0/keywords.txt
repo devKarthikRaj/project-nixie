@@ -1,0 +1,14 @@
+pcf2129rtc	KEYWORD1
+rtcInitialConfig	KEYWORD2
+updateCurrentTimeToRTC	KEYWORD2
+clearMsf KEYWORD2
+readRtcHour	KEYWORD2
+readRtcMin	KEYWORD2	
+readRtcSec	KEYWORD2	
+readRtcHourBCD0	KEYWORD2 
+readRtcHourBCD1	KEYWORD2 
+readRtcMinBCD0	KEYWORD2 
+readRtcMinBCD1	KEYWORD2 
+readRtcSecBCD0	KEYWORD2 
+readRtcSecBCD1	KEYWORD2 
+
