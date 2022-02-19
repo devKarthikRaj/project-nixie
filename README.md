@@ -6,7 +6,7 @@ This repository contains hardware and software documentation for a Nixie tube cl
 
 
 ### A lil bit of history...
-Nixie Tubes were used back in the day in most displays until the world was taken over by LEDs (Light Emitting Diodes). Nixies were invented in Hungary and largely used in the Soviet Union in the 1950s. Nixies are not mass produced anymore! <br>
+Nixie Tubes were used back in the day in displays until the world was taken over by LEDs. <br>
 
 ### Featuring our contraption...
 Fret not! We have brought this relic back to life with our custom-built Nixie hardware. Our contraption can display time and also countdown from a set time. It comes with multi-color backlighting too! You can control the time, countdown, and lighting through a mobile app developed by us as well! <br>
