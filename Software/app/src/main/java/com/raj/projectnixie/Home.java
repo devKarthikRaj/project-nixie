@@ -9,18 +9,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
-
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class Home extends AppCompatActivity implements OnClickListener {
     private static final String TAG = "Home";
@@ -85,31 +80,35 @@ public class Home extends AppCompatActivity implements OnClickListener {
         countdownModeBtn.setOnClickListener(this);
         ledControlBtn.setOnClickListener(this);
 
-        //Init shared preferences
-        SharedPreferences sp = getSharedPreferences("btVeriEnSp", MODE_PRIVATE);
+        IntentFilter BTDisconnectedFromRemoteDeviceIntent = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(BTDisconnectedBroadcastReceiver, BTDisconnectedFromRemoteDeviceIntent);
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.Button_Time_Mode:
-                timeModeBtn.startAnimation(scaleUp);
-                timeModeBtn.startAnimation(scaleDown);
-                Log.d(TAG, "Time Mode Button Clicked");
-                startActivity(new Intent(Home.this, TimeMode.class));
-                break;
-            case R.id.Button_Countdown_Mode:
-                countdownModeBtn.startAnimation(scaleUp);
-                countdownModeBtn.startAnimation(scaleDown);
-                Log.d(TAG, "Countdown Mode Button Clicked");
-                startActivity(new Intent(Home.this, CountdownMode.class));
-                break;
-            case R.id.Button_LED_Control:
-                ledControlBtn.startAnimation(scaleUp);
-                ledControlBtn.startAnimation(scaleDown);
-                Log.d(TAG, "LED Control Button Clicked");
-                startActivity(new Intent(Home.this, LedControl.class));
-                break;
+        int clickedButtonId = v.getId();
+        if (clickedButtonId == R.id.Button_Time_Mode) {
+            timeModeBtn.startAnimation(scaleUp);
+            timeModeBtn.startAnimation(scaleDown);
+            Log.d(TAG, "Time Mode Button Clicked");
+            startActivity(new Intent(Home.this, TimeMode.class));
+        } else if(clickedButtonId == R.id.Button_Countdown_Mode) {
+            countdownModeBtn.startAnimation(scaleUp);
+            countdownModeBtn.startAnimation(scaleDown);
+            Log.d(TAG, "Countdown Mode Button Clicked");
+            startActivity(new Intent(Home.this, CountdownMode.class));
+        } else if(clickedButtonId == R.id.Button_LED_Control) {
+            ledControlBtn.startAnimation(scaleUp);
+            ledControlBtn.startAnimation(scaleDown);
+            Log.d(TAG, "LED Control Button Clicked");
+            startActivity(new Intent(Home.this, LedControl.class));
         }
     }
+
+    private final BroadcastReceiver BTDisconnectedBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(new Intent(Home.this, SplashScreen.class));
+        }
+    };
 }

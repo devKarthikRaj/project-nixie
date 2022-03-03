@@ -2,9 +2,12 @@ package com.raj.projectnixie;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -72,60 +75,55 @@ public class TimeMode extends AppCompatActivity implements View.OnClickListener 
         dispOnNixieBtn.setOnClickListener(this);
 
         timeDisplayTV.setText(R.string.init_text_time_display);
+
+        IntentFilter BTDisconnectedFromRemoteDeviceIntent = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(BTDisconnectedBroadcastReceiver, BTDisconnectedFromRemoteDeviceIntent);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.Button_Manual_Time:
-                manualTimeBtn.startAnimation(scaleUp);
-                manualTimeBtn.startAnimation(scaleDown);
+        int clickedButtonId = v.getId();
 
-                //Configure and Initialize TimePicker
-                materialTimePicker = new MaterialTimePicker.Builder()
-                        .setTimeFormat(TimeFormat.CLOCK_12H)
-                        .setHour(12)
-                        .setMinute(0)
-                        .setTitleText("Select Time to Display on Nixie")
-                        .build();
+        if(clickedButtonId == R.id.Button_Manual_Time) {
+            manualTimeBtn.startAnimation(scaleUp);
+            manualTimeBtn.startAnimation(scaleDown);
 
-                materialTimePicker.show(getSupportFragmentManager(), TAG);
+            //Configure and Initialize TimePicker
+            materialTimePicker = new MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_12H)
+                    .setHour(12)
+                    .setMinute(0)
+                    .setTitleText("Select Time to Display on Nixie")
+                    .build();
 
-                //OnClickListeners for various TimePicker buttons
-                materialTimePicker.addOnPositiveButtonClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        String displayTimeString = getTimeFromTimePicker();
-                        Log.d(TAG,"Time Picked Through TimePicker Fragment");
-                        timeDisplayTV.setText(displayTimeString);
-                    }
-                });
+            materialTimePicker.show(getSupportFragmentManager(), TAG);
 
-                materialTimePicker.addOnNegativeButtonClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        Log.d(TAG, "Time Not Picked, TimePicker Fragment Dismissed");
-                        timeDisplayTV.setText(R.string.init_text_time_display);
-                    }
-                });
-                break;
-
-            case R.id.Button_System_Time:
-                systemTimeBtn.startAnimation(scaleUp);
-                systemTimeBtn.startAnimation(scaleDown);
-
-                String displayTimeString = getSystemTime();
+            //OnClickListeners for various TimePicker buttons
+            materialTimePicker.addOnPositiveButtonClickListener(v1 -> {
+                String displayTimeString = getTimeFromTimePicker();
+                Log.d(TAG,"Time Picked Through TimePicker Fragment");
                 timeDisplayTV.setText(displayTimeString);
-                break;
+            });
 
-            case R.id.Button_Sync_With_Nixie:
-                dispOnNixieBtn.startAnimation(scaleUp);
-                dispOnNixieBtn.startAnimation(scaleDown);
+            materialTimePicker.addOnNegativeButtonClickListener(v12 -> {
+                Log.d(TAG, "Time Not Picked, TimePicker Fragment Dismissed");
+                timeDisplayTV.setText(R.string.init_text_time_display);
+            });
+        } else if(clickedButtonId == R.id.Button_System_Time) {
+            systemTimeBtn.startAnimation(scaleUp);
+            systemTimeBtn.startAnimation(scaleDown);
 
-                //Write setHour, setMin, setSec to Bluetooth
-                //Put everything that has to be sent over the bt link into a nice byte array in ascii
-                byte[] sendTime = ("T:"+String.valueOf(setHour)+":"+String.valueOf(setMin)+":"+String.valueOf(setSec)).getBytes(Charset.defaultCharset());
-                mBluetoothConnectionService.write(sendTime);
-                Log.d(TAG, "T:"+String.valueOf(setHour)+":"+String.valueOf(setMin)+":"+String.valueOf(setSec));
-                break;
+            String displayTimeString = getSystemTime();
+            timeDisplayTV.setText(displayTimeString);
+        } else if(clickedButtonId == R.id.Button_Sync_With_Nixie) {
+            dispOnNixieBtn.startAnimation(scaleUp);
+            dispOnNixieBtn.startAnimation(scaleDown);
+
+            //Write setHour, setMin, setSec to Bluetooth
+            //Put everything that has to be sent over the bt link into a nice byte array in ascii
+            byte[] sendTime = ("T:"+ setHour +":"+ setMin +":"+ setSec).getBytes(Charset.defaultCharset());
+            mBluetoothConnectionService.write(sendTime);
+            Log.d(TAG, "T:"+ setHour +":"+ setMin +":"+ setSec);
         }
     }
 
@@ -192,7 +190,7 @@ public class TimeMode extends AppCompatActivity implements View.OnClickListener 
     }
 
     //When we bind with BluetoothConnectionService... ServiceConnection is used to communicate with the service we have bound with
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         //What happens when we first bind with the service...
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -207,6 +205,13 @@ public class TimeMode extends AppCompatActivity implements View.OnClickListener 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             isBound = false;
+        }
+    };
+
+    private final BroadcastReceiver BTDisconnectedBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(new Intent(TimeMode.this, SplashScreen.class));
         }
     };
 }

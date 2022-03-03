@@ -2,9 +2,12 @@ package com.raj.projectnixie;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -56,62 +59,46 @@ public class CountdownMode extends AppCompatActivity implements View.OnClickList
 
         dispOnNixieBtn.setOnClickListener(this);
 
-        EThour.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EThour.setText("");
-            }
-        });
+        EThour.setOnClickListener(view -> EThour.setText(""));
 
-        ETmin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ETmin.setText("");
-            }
-        });
+        ETmin.setOnClickListener(view -> ETmin.setText(""));
 
-        ETsec.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ETsec.setText("");
-            }
-        });
+        ETsec.setOnClickListener(view -> ETsec.setText(""));
+
+        IntentFilter BTDisconnectedFromRemoteDeviceIntent = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(BTDisconnectedBroadcastReceiver, BTDisconnectedFromRemoteDeviceIntent);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.Button_Sync_With_Nixie:
-                dispOnNixieBtn.startAnimation(scaleUp);
-                dispOnNixieBtn.startAnimation(scaleDown);
+        if (v.getId() == R.id.Button_Sync_With_Nixie) {
+            dispOnNixieBtn.startAnimation(scaleUp);
+            dispOnNixieBtn.startAnimation(scaleDown);
 
-                //If the user has not entered anything...
-                if(!EThour.getText().toString().equals("") && !ETmin.getText().toString().equals("") && !ETsec.getText().toString().equals("")) {
-                    //If the user entry is valid...
-                    if(Integer.parseInt(EThour.getText().toString()) < 100 && Integer.parseInt(EThour.getText().toString()) >= 0
-                    && Integer.parseInt(ETmin.getText().toString()) < 60 && Integer.parseInt(ETmin.getText().toString()) >= 0
-                    && Integer.parseInt(ETsec.getText().toString()) < 60 && Integer.parseInt(ETsec.getText().toString()) >= 0) {
-                        byte[] sendCountdownTime = ("C:"+EThour.getText().toString()+":"+ETmin.getText().toString()+":"+ETsec.getText().toString()).getBytes(Charset.defaultCharset());
-                        mBluetoothConnectionService.write(sendCountdownTime);
-                        Log.d(TAG,EThour.getText().toString()+":"+ETmin.getText().toString()+":"+ETsec.getText().toString());
-                    }
-                    //If the user entry is invalid...
-                    else {
-                        Toast.makeText(getApplicationContext(),"Enter a Valid Time to Countdown From !!!", Toast.LENGTH_SHORT).show();
-                    }
+            //If the user has not entered anything...
+            if (!EThour.getText().toString().equals("") && !ETmin.getText().toString().equals("") && !ETsec.getText().toString().equals("")) {
+                //If the user entry is valid...
+                if (Integer.parseInt(EThour.getText().toString()) < 100 && Integer.parseInt(EThour.getText().toString()) >= 0
+                        && Integer.parseInt(ETmin.getText().toString()) < 60 && Integer.parseInt(ETmin.getText().toString()) >= 0
+                        && Integer.parseInt(ETsec.getText().toString()) < 60 && Integer.parseInt(ETsec.getText().toString()) >= 0) {
+                    byte[] sendCountdownTime = ("C:" + EThour.getText().toString() + ":" + ETmin.getText().toString() + ":" + ETsec.getText().toString()).getBytes(Charset.defaultCharset());
+                    mBluetoothConnectionService.write(sendCountdownTime);
+                    Log.d(TAG, EThour.getText().toString() + ":" + ETmin.getText().toString() + ":" + ETsec.getText().toString());
                 }
-                else if(EThour.getText().toString().equals("Hours") || !ETmin.getText().toString().equals("Mins")) {
-                    Toast.makeText(getApplicationContext(),"Fill in all the fields !!!", Toast.LENGTH_SHORT).show();
-                }
+                //If the user entry is invalid...
                 else {
-                    Toast.makeText(getApplicationContext(),"Enter a Time to Countdown From !!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Enter a Valid Time to Countdown From !!!", Toast.LENGTH_SHORT).show();
                 }
-                break;
+            } else if (EThour.getText().toString().equals("Hours") || !ETmin.getText().toString().equals("Mins")) {
+                Toast.makeText(getApplicationContext(), "Fill in all the fields !!!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Enter a Time to Countdown From !!!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     //When we bind with BluetoothConnectionService... ServiceConnection is used to communicate with the service we have bound with
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         //What happens when we first bind with the service...
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -125,6 +112,13 @@ public class CountdownMode extends AppCompatActivity implements View.OnClickList
         @Override
         public void onServiceDisconnected(ComponentName name) {
             isBound = false;
+        }
+    };
+
+    private final BroadcastReceiver BTDisconnectedBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startActivity(new Intent(CountdownMode.this, SplashScreen.class));
         }
     };
 }

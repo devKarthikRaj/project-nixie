@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDeviceListAdapter.MyViewHolder> {
-    private ArrayList<BluetoothDevice> mBTDevicesInfo;
-    private PairedDevicesRVClickInterface mPairedDevicesRVClickInterface;
+    private final ArrayList<BluetoothDevice> mBTDevicesInfo;
+    private final PairedDevicesRVClickInterface mPairedDevicesRVClickInterface;
 
     // Constructor
     public BluetoothDeviceListAdapter(ArrayList<BluetoothDevice> btDevicesInfo, PairedDevicesRVClickInterface pairedDevicesRVClickInterface) {
@@ -35,20 +35,12 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
             mBTAddr = itemView.findViewById(R.id.bt_mac_addr);
 
             // OnClickListeners for each and every way in which the user is expected to "touch" the recycler view
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mPairedDevicesRVClickInterface.onItemClick(getLayoutPosition());
-                }
-            });
+            itemView.setOnClickListener(v -> mPairedDevicesRVClickInterface.onItemClick(getLayoutPosition()));
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    mPairedDevicesRVClickInterface.onLongItemClick(getLayoutPosition());
+            itemView.setOnLongClickListener(view -> {
+                mPairedDevicesRVClickInterface.onLongItemClick(getLayoutPosition());
 
-                    return true;
-                }
+                return true;
             });
             //---------------------------------------------------------------------------------------------------
         }
@@ -60,6 +52,7 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
         method is called to display that item
         In short, whenever the recycler view needs to (display a new item / item that just became visible), onCreateViewHolder is called
     */
+    @NonNull
     @Override
     public BluetoothDeviceListAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Inflate the recycler view item layout file which is in the main xml
@@ -67,8 +60,7 @@ public class BluetoothDeviceListAdapter extends RecyclerView.Adapter<BluetoothDe
 
         // Create an instance of MyViewHolder and pass itemView to it
         // itemView contains the inflated recyclerview_item layout file
-        MyViewHolder vh = new MyViewHolder(itemView);
-        return vh;
+        return new MyViewHolder(itemView);
     }
 
     @Override

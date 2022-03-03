@@ -1,9 +1,11 @@
 package com.raj.projectnixie;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -14,13 +16,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -35,7 +37,8 @@ import java.util.UUID;
 //This must be imported for binding to the BluetoothConnectionService
 import com.raj.projectnixie.BluetoothConnectionService.LocalBinder;
 
-public class SplashScreen extends AppCompatActivity implements PairedDevicesRVClickInterface, BluetoothConnectionUserVerificationDialog.PopUpDialogListener {
+@SuppressLint("CustomSplashScreen")
+public class SplashScreen extends AppCompatActivity implements PairedDevicesRVClickInterface {
     private static final String TAG = "SplashScreen";
 
     TextView tvBTStatusMonitor;
@@ -96,7 +99,7 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
         mBluetoothDeviceListAdapter = new BluetoothDeviceListAdapter(mBTDevicesInfo, this);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBTDevicesInfo = new ArrayList<>();
-        enableBt(); // Enable Bluetooth "if its not already enabled"
+        enableBt();
 
         rvPairedDevices = findViewById(R.id.RecyclerView_Paired_Bluetooth_Devices);
         rvPairedDevices.setHasFixedSize(false);
@@ -111,41 +114,32 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
         registerReceiver(BTConnectedBroadcastReceiver, BTConnectedToRemoteDeviceIntent);
 
         IntentFilter BTDisconnectedFromRemoteDeviceIntent = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        registerReceiver(BTDisonnectedBroadcastReceiver, BTDisconnectedFromRemoteDeviceIntent);
+        registerReceiver(BTDisconnectedBroadcastReceiver, BTDisconnectedFromRemoteDeviceIntent);
 
         // OnClickListeners
-        btnBtListPairedDevices.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btnBtListPairedDevices.startAnimation(scaleUp);
-                btnBtListPairedDevices.startAnimation(scaleDown);
+        btnBtListPairedDevices.setOnClickListener(view -> {
+            btnBtListPairedDevices.startAnimation(scaleUp);
+            btnBtListPairedDevices.startAnimation(scaleDown);
 
-                if (mBluetoothAdapter.isEnabled()) {
-                    Log.d(TAG, "onClick: Listing paired devices (if any)");
-                    ListPairedBtDevices();
-                } else {
-                    Toast.makeText(getBaseContext(), "Enable Bluetooth to view paired devices", Toast.LENGTH_SHORT).show();
-                    enableBt();
-                }
+            if (mBluetoothAdapter.isEnabled()) {
+                Log.d(TAG, "onClick: Listing paired devices (if any)");
+                ListPairedBtDevices();
+            } else {
+                Toast.makeText(getBaseContext(), "Enable Bluetooth to view paired devices", Toast.LENGTH_SHORT).show();
+                enableBt();
             }
         });
 
-        btnGoToBtSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btnGoToBtSettings.startAnimation(scaleUp);
-                btnGoToBtSettings.startAnimation(scaleDown);
-                startActivityForResult(new Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS), 0);
-            }
+        btnGoToBtSettings.setOnClickListener(view -> {
+            btnGoToBtSettings.startAnimation(scaleUp);
+            btnGoToBtSettings.startAnimation(scaleDown);
+            startActivityForResult(new Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS), 0);
         });
 
-        btnDisconnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btnDisconnect.startAnimation(scaleUp);
-                btnDisconnect.startAnimation(scaleDown);
-                disconnect();
-            }
+        btnDisconnect.setOnClickListener(view -> {
+            btnDisconnect.startAnimation(scaleUp);
+            btnDisconnect.startAnimation(scaleDown);
+            disconnect();
         });
     }
 
@@ -154,14 +148,18 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
         if(!mBluetoothAdapter.isEnabled()) {
             Log.d(TAG, "toggleBt: Request to enable Bluetooth");
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(enableBtIntent);
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED)
+                startActivity(enableBtIntent);
         }
     }
 
     // Lists all devices that the device has "already paired with"
     private void ListPairedBtDevices() {
-        Set<BluetoothDevice> pairedBTDevices = mBluetoothAdapter.getBondedDevices();
+        Set<BluetoothDevice> pairedBTDevices = null;
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED)
+            pairedBTDevices = mBluetoothAdapter.getBondedDevices();
 
+        assert pairedBTDevices != null;
         if(pairedBTDevices.size() == 0) {
             Toast.makeText(this, "No Paired Devices", Toast.LENGTH_SHORT).show();
         }
@@ -185,7 +183,8 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
     @Override
     public void onItemClick(int position) {
         // Cancel discovery before trying to make the connection because discovery will slow down a connection
-        mBluetoothAdapter.cancelDiscovery();
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED)
+            mBluetoothAdapter.cancelDiscovery();
 
         touchedDevice = mBTDevicesInfo.get(position);
 
@@ -226,7 +225,7 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
     };
 
     //This code will execute when the bt disconnected broadcast is received
-    private final BroadcastReceiver BTDisonnectedBroadcastReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver BTDisconnectedBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             tvBTStatusMonitor.setText(R.string.disconnected_text);
@@ -235,6 +234,7 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
 
     //The code in this handler will execute when an incoming message is detected
     @SuppressLint("HandlerLeak")
+    //Looper.getMainLooper()).postDelayed(new Runnable() {
     public final Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             Bundle recBundle = msg.getData();
@@ -269,7 +269,7 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
     };
 
     //When we bind with BluetoothConnectionService... ServiceConnection is used to communicate with the service we have bound with
-    private ServiceConnection serviceConnection = new ServiceConnection() {
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         //What happens when we first bind with the service...
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -287,22 +287,4 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
         @Override
         public void onServiceDisconnected(ComponentName name) { isBound = false; }
     };
-
-    public void openDialog() {
-        BluetoothConnectionUserVerificationDialog bluetoothConnectionUserVerificationDialog = new BluetoothConnectionUserVerificationDialog();
-        bluetoothConnectionUserVerificationDialog.show(getSupportFragmentManager(), "Bluetooth Connection User Verification Dialog");
-
-    }
-
-    //When the user clicks the okay aka positive button in the pop up dialog... the username and password that the user entered in the
-    //pop up dialog is sent to the applyTexts method through which it is accessed by the main activity
-    @Override
-    public void applyTexts(String alertDialogResult) {
-        //If alertDialogResult is cancelled... User has pressed cancel button to cancel connection... So disconnect from hardware!
-        if(alertDialogResult.equals("cancel")) {
-            disconnect();
-        }
-        //If alertDialogResult is not cancelled... Which means the user has entered some verification code inside...
-        mBluetoothConnectionService.write(alertDialogResult.getBytes(Charset.defaultCharset()));
-    }
 }
