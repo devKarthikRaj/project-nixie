@@ -9,7 +9,7 @@ TaskHandle_t Task1; //Runs on core 1
 #include <Wire.h> //I2C lib
 #include <pcf2129rtc.h> //RTC lib
 #include <NTC_PCA9698.h> //Port Expander lib
-#include "num2disp.h" //Nixie Clock Driver lib
+#include "nixiedisplay.h" //Nixie Tube Driver Lib
 #include "BluetoothSerial.h" //Bluetooth lib
 #include <WS2812FX.h> //RGB LED lib
 
@@ -88,12 +88,12 @@ PCA9698 expanderChip0(0x20,twimIntSDA,twimIntSCL,1000000); //(I2C_ADDR,SDA,SCL,S
 PCA9698 expanderChip1(0x21,twimIntSDA,twimIntSCL,1000000);
 
 /* declare a NumericalDisplay_t for each tube */
-NumericalDisplay_t tube1;
+/*NumericalDisplay_t tube1;
 NumericalDisplay_t tube2;
 NumericalDisplay_t tube3;
 NumericalDisplay_t tube4;
 NumericalDisplay_t tube5;
-NumericalDisplay_t tube6;
+NumericalDisplay_t tube6;*/
 
 /* pinout arrays to be associated with a NumericalDisplay_t */
 uint8_t pinout1[10] = {9, 0, 1, 2, 3, 4, 5, 6, 7, 8};
@@ -102,6 +102,16 @@ uint8_t pinout3[10] = {39, 28, 29, 30, 31, 34, 35, 36, 37, 38};
 uint8_t pinout4[10] = {49, 40, 41, 42, 43, 44, 45, 46, 47, 48};
 uint8_t pinout5[10] = {67, 50, 51, 52, 53, 54, 55, 64, 65, 66};
 uint8_t pinout6[10] = {79, 68, 69, 70, 71, 74, 75, 76, 77, 78};
+
+//Nixie tube driver lib params
+uint8_t active = 6; //6 active tubes
+uint8_t offset = 0; //Do not offset
+
+//Instantiate the NixieDisplay object
+NixieDisplay display(active, offset, pinout1, pinout2, pinout3, pinout4, pinout5, pinout6);
+
+bool platformGPIOWrite(uint8_t pin, bool data);
+void platformDelayMs(uint32_t ms);
 
 //Create an instance of the RGB LED lib
 WS2812FX ws2812fx = WS2812FX(6, ledBus, NEO_GRB + NEO_KHZ800); //(LED_COUNT,LED_PIN,NEO_GRB + NEO_KHZ800)
@@ -188,24 +198,14 @@ void setup() {
     expanderChip1.digitalWrite(i, 0);
   }
 
-  /* link pinout array and NumericalDisplay_t */
-  num2disp_createInstanceNumericalDisplay(&tube1, pinout1);
-  num2disp_createInstanceNumericalDisplay(&tube2, pinout2);
-  num2disp_createInstanceNumericalDisplay(&tube3, pinout3);
-  num2disp_createInstanceNumericalDisplay(&tube4, pinout4);
-  num2disp_createInstanceNumericalDisplay(&tube5, pinout5);
-  num2disp_createInstanceNumericalDisplay(&tube6, pinout6);
+  display.init(); //Initialize display
 
-  /* link all instances of NumericalDisplay_t */
-  num2disp_createInstanceFullDisplay(&tube1, &tube2, &tube3, &tube4, &tube5, &tube6, 6, 0);
-
-  //Run cathode protection and serial print result
-  Serial.println(num2disp_runCathodePoisoningProtection(15, CATHODE_PROTECTION_STYLE_WAVE));
+  //Run cathode protection
+  display.runProtection(CATHODE_PROTECTION_STYLE_SEQUENTIAL, 5000);
 
   //Start Nixie Clock in time mode from 000000
   int initTime=0;
-  int initTimePrev=999999;
-  num2disp_writeNumberToFullDisplay(initTime, initTimePrev, true);
+  display.write(initTime);
   
   catProInitTime = millis(); //Init catProInitTime
 
@@ -257,64 +257,29 @@ void disableSubsystems() {
   ws2812fx.stop();
 }
 
-//Run this function until it returns true
-//Returns true = security verification successful
-//Returns false = security verification unsuccessful
-bool VerifyBtConnection() {
-  int state = 0; //Set the starting state of the state machine
-  for(int i=0; i<2; i++) {
-    switch(state) {
-      case 0:
-      //Hang here till a remote device connects...
-      Serial.println("Waiting for connection from remote device...");
-      while(!espBt.hasClient()) {
-        digitalWrite(comLed,HIGH);
-        delay(50);
-        digitalWrite(comLed,LOW);
-        delay(50);
-      }
+//The function is required for the Nixie tube driver library
+bool platformGPIOWrite(uint8_t pin, bool data)
+{
 
-      espBt.print("REQ_CHECK_1");
-
-      //Hang here till level 1 verification key is received... (auto sent by hardware)
-      Serial.println("Waiting for Level 1 verification key from remote device...");
-      while(!espBt.available()) {
-        digitalWrite(comLed,HIGH);
-        delay(50);
-        digitalWrite(comLed,LOW);
-        delay(50);
-      }
-      
-      if(espBt.readString() == "REQ_CONN") {
-        Serial.println("Level 1 Pass - Connection Pass");
-        espBt.print("CONN_PASS"); //Tell the hardware that level 1 verification is successful... Let the connection thru 
-        state = 1;
-      }
-      else {
-        Serial.println("Level 1 Fail");
-        state = 0;
-      }
-      break;
-
-      case 1: 
-      return true;
-
-      //Other BT verification cases (for user bt verification) have been removed
-    }
+  if (pin >= 40)
+  {
+    pin = pin - 40;
+    expanderChip1.digitalWrite(pin, data);
+    return true;
   }
+  else
+  {
+    expanderChip0.digitalWrite(pin, data);
+    return true;
+  }
+
+  return false;
 }
 
-//Some function definition (edward lib req)
-/* platform gpio write (i.e generic digitalwrite or write for other peripheral expander device */
-bool num2disp_gpio_write(uint8_t pin, bool data) {
-  if (pin >= 40) {
-    pin -= 40;
-    expanderChip1.digitalWrite(pin, data);
-  }
-  else {
-    expanderChip0.digitalWrite(pin, data);
-  }
-  return false;
+//The function is required for the Nixie tube driver library
+void platformDelayMs(uint32_t ms)
+{
+  vTaskDelay(ms);
 }
 
 //Main Code for Core 0 and 1 
@@ -325,194 +290,186 @@ bool num2disp_gpio_write(uint8_t pin, bool data) {
  */
 void codeForTask0(void * parameter) {
   while(1) {
-    //Until hardware verification is successful... hang at this line...
-    while(VerifyBtConnection()!=true){};  
-    Serial.println("Hardware verification successful");
     
     //This is the time when user enters the mobile app's home page to config the clock
     unsigned long initTime = millis();
 
-    //While there is an active BT connection to the app and it has not been more than 3mins since the user started to config the clock...
-    //***User has 3mins to config clock, after which the user will have to verify Bt connection again (this is for security purposes)***
-    while(espBt.hasClient() && millis() - initTime < 180000) {
-      //digitalWrite(comLed,HIGH); 
-      //If app data has been received from app side...
-      if(espBt.available()) {
-        //Receive data from app via Bt
-        String recDataString = espBt.readString();
-        Serial.println("Data Received From App: " + recDataString);
-        Serial.println("Processing Data Received...");
-        
-        //Clear the array
-        for(int i=0; i<20; i++) {
-          recDataBuf[i] = '\0';
-        }
-        
-        recDataString.toCharArray(recDataBuf,(recDataString.length()+1));
-        
-        //Process what kind of data it is (time/countdown/LED)and accordingly store to time/countdown/LED vars
-        /*Standard format of data on Project Nixe Bluetooth Link:
-         * A:BC:DE:FG
-         *   A = T (Time Mode) / C (Countdown Mode) / L (Config LED)
-         * B-C = Hours  
-         * D-E = Mins
-         * F-G = Secs
-        */
-        
-        //Time decoding
-        //This decoding is necessary as the time sent by the android system varies in format for diff times
-        if(recDataString.length() == 10) {
-          //Format: T:HH:MM:SS or C:HH:MM:SS
-          rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
-          rxMin = (String(recDataBuf[5])+String(recDataBuf[6])).toInt();
-          rxSec = (String(recDataBuf[8])+String(recDataBuf[9])).toInt();
-        }
-        else if(recDataString.length() == 9) {
-          if(recDataBuf[4] == ':') {
-            if(recDataBuf[7] == ':') {
-              //Format: T:HH:MM:S or C:HH:MM:S
-              rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
-              rxMin = (String(recDataBuf[5])+String(recDataBuf[6])).toInt();
-              rxSec = (String(recDataBuf[8])).toInt();
-            }
-            else {
-              //Format: T:HH:M:SS or C:HH:M:SS
-              rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
-              rxMin = (String(recDataBuf[5])).toInt();
-              rxSec = (String(recDataBuf[7])+String(recDataBuf[8])).toInt();
-            }
+    //If app data has been received from app side...
+    if(espBt.available()) {
+      //Receive data from app via Bt
+      String recDataString = espBt.readString();
+      Serial.println("Data Received From App: " + recDataString);
+      Serial.println("Processing Data Received...");
+      
+      //Clear the array
+      for(int i=0; i<20; i++) {
+        recDataBuf[i] = '\0';
+      }
+      
+      recDataString.toCharArray(recDataBuf,(recDataString.length()+1));
+      
+      //Process what kind of data it is (time/countdown/LED)and accordingly store to time/countdown/LED vars
+      /*Standard format of data on Project Nixe Bluetooth Link:
+       * A:BC:DE:FG
+       *   A = T (Time Mode) / C (Countdown Mode) / L (Config LED)
+       * B-C = Hours  
+       * D-E = Mins
+       * F-G = Secs
+      */
+      
+      //Time decoding
+      //This decoding is necessary as the time sent by the android system varies in format for diff times
+      if(recDataString.length() == 10) {
+        //Format: T:HH:MM:SS or C:HH:MM:SS
+        rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
+        rxMin = (String(recDataBuf[5])+String(recDataBuf[6])).toInt();
+        rxSec = (String(recDataBuf[8])+String(recDataBuf[9])).toInt();
+      }
+      else if(recDataString.length() == 9) {
+        if(recDataBuf[4] == ':') {
+          if(recDataBuf[7] == ':') {
+            //Format: T:HH:MM:S or C:HH:MM:S
+            rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
+            rxMin = (String(recDataBuf[5])+String(recDataBuf[6])).toInt();
+            rxSec = (String(recDataBuf[8])).toInt();
           }
-          else if (recDataBuf[3] == ':') {
-            //Format: T:H:MM:SS or C:H:MM:SS
+          else {
+            //Format: T:HH:M:SS or C:HH:M:SS
+            rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
+            rxMin = (String(recDataBuf[5])).toInt();
+            rxSec = (String(recDataBuf[7])+String(recDataBuf[8])).toInt();
+          }
+        }
+        else if (recDataBuf[3] == ':') {
+          //Format: T:H:MM:SS or C:H:MM:SS
+          rxHour = (String(recDataBuf[2])).toInt();
+          rxMin = (String(recDataBuf[4])+String(recDataBuf[5])).toInt();
+          rxSec = (String(recDataBuf[7])+String(recDataBuf[8])).toInt();
+        }
+      }
+      else if(recDataString.length() == 7) {
+        //Format: T:H:M:S or C:H:M:S 
+        rxHour = (String(recDataBuf[2])).toInt();
+        rxMin = (String(recDataBuf[4])).toInt();
+        rxSec = (String(recDataBuf[6])).toInt();
+      }
+      if(recDataString.length() == 8) {
+        if(recDataBuf[3] == ':') {
+          if(recDataBuf[5] == ':') {
+            //Format: T:H:M:SS or C:H:M:SS  
+            rxHour = (String(recDataBuf[2])).toInt();
+            rxMin = (String(recDataBuf[4])).toInt();
+            rxSec = (String(recDataBuf[6])+String(recDataBuf[7])).toInt();
+          }
+          else {
+            //Format: T:H:MM:S or C:H:MM:S
             rxHour = (String(recDataBuf[2])).toInt();
             rxMin = (String(recDataBuf[4])+String(recDataBuf[5])).toInt();
             rxSec = (String(recDataBuf[7])+String(recDataBuf[8])).toInt();
           }
         }
-        else if(recDataString.length() == 7) {
-          //Format: T:H:M:S or C:H:M:S 
-          rxHour = (String(recDataBuf[2])).toInt();
-          rxMin = (String(recDataBuf[4])).toInt();
-          rxSec = (String(recDataBuf[6])).toInt();
-        }
-        if(recDataString.length() == 8) {
-          if(recDataBuf[3] == ':') {
-            if(recDataBuf[5] == ':') {
-              //Format: T:H:M:SS or C:H:M:SS  
-              rxHour = (String(recDataBuf[2])).toInt();
-              rxMin = (String(recDataBuf[4])).toInt();
-              rxSec = (String(recDataBuf[6])+String(recDataBuf[7])).toInt();
-            }
-            else {
-              //Format: T:H:MM:S or C:H:MM:S
-              rxHour = (String(recDataBuf[2])).toInt();
-              rxMin = (String(recDataBuf[4])+String(recDataBuf[5])).toInt();
-              rxSec = (String(recDataBuf[7])+String(recDataBuf[8])).toInt();
-            }
-          }
-          else if(recDataBuf[4] == ':') {
-            //Format: T:HH:M:S or C:HH:M:S
-            Serial.println("2");    
-            rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
-            rxMin = (String(recDataBuf[5])).toInt();
-            rxSec = (String(recDataBuf[7])).toInt();
-          }
-        }
-        
-        //If Time Mode Initiated by App...
-        if(recDataBuf[0]=='T') {  
-          Serial.println("Time Mode Initiated");
-
-          //Set setHardwareMode to true indicating to core 1 that user has activated time mode
-          setHardwareMode = true;
-
-          //Set updateRtcFlag to alert core 1 to update the display
-          updateRtcFlag = true;
-
-          //set the timeInitFlag 
-          timeInitFlag = true;
-        }
-        
-        //If Countdown Mode Initiated by App...
-        else if(recDataBuf[0]=='C') {
-          Serial.println("Countdown Mode Initiated");
-
-          //Set setHardwareMode to false indicating to core 1 that user has activated countdown mode
-          setHardwareMode = false;
-
-          //Set updateRtcFlag to alert core 1 to update the display
-          updateRtcFlag = true;
-
-          //set the countdownInitFlag to run the countdownInit function once
-          countdownInitFlag = true;
-        }
-        
-        //If RGB LED Config Changed by App...
-        else if(recDataBuf[0]=='L') {
-          Serial.println("RGB LED Config");
-
-          //Format: L:A:BCD:EFG:HIJ:KLM
-          /*   A = LED Mode   = 1-8
-           * B-D = Brightness = 0-100
-           * E-G = R in RGB   = 0-255 
-           * H-J = G in RGB   = 0-255
-           * K-M = B in RGB   = 0-255
-           */
-         
-          //Read LED Mode 
-          if(recDataBuf[2] == '1') {
-            //Mode 1 - Rainbow Cycle
-            ledModeNum = 1;
-          }
-          else if(recDataBuf[2] == '2') {
-            //Mode 2 - Breath
-            ledModeNum = 2;
-          }
-          else if(recDataBuf[2] == '3') {
-            //Mode 3 - Fade
-            ledModeNum = 3;
-          }
-          else if(recDataBuf[2] == '4') {
-            //Mode 4 - Theater Chase
-            ledModeNum = 4;
-          }
-          else if(recDataBuf[2] == '5') {
-            //Mode 5 - Theater Chase Rainbow
-            ledModeNum = 5;
-          }
-          else if(recDataBuf[2] == '6') {
-            //Mode 6 - Running Lights
-            ledModeNum = 6;
-          }
-          else if(recDataBuf[2] == '7') {
-            //Mode 7 - Merry Christmas
-            ledModeNum = 7;
-          }
-          else if(recDataBuf[2] == '8') {
-            //Mode 8 - Static
-            ledModeNum = 8;
-          }
-          
-          //Read LED brightness
-          ledBrightnessVar = (String(recDataBuf[4]) + String(recDataBuf[5]) + String(recDataBuf[6])).toInt();
-          
-          //Read LED Color
-          redVar = (String(recDataBuf[8]) + String(recDataBuf[9]) + String(recDataBuf[10])).toInt(); 
-          greenVar = (String(recDataBuf[12]) + String(recDataBuf[13]) + String(recDataBuf[14])).toInt(); 
-          blueVar = (String(recDataBuf[16]) + String(recDataBuf[17]) + String(recDataBuf[18])).toInt();
-
-          //set updateLedFlag to alert core 1 to update the RGB LEDs
-          updateLedFlag = true;
+        else if(recDataBuf[4] == ':') {
+          //Format: T:HH:M:S or C:HH:M:S
+          Serial.println("2");    
+          rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
+          rxMin = (String(recDataBuf[5])).toInt();
+          rxSec = (String(recDataBuf[7])).toInt();
         }
       }
-      //If no data is received from app and core 0 is not busy processing that data...
-      else {
-        //Slow blink comLed to indicate to user that hardware is connected to app and waiting for commands from app side
-        digitalWrite(comLed,HIGH);
-        delay(200);
-        digitalWrite(comLed,LOW);
-        delay(200);
+      
+      //If Time Mode Initiated by App...
+      if(recDataBuf[0]=='T') {  
+        Serial.println("Time Mode Initiated");
+
+        //Set setHardwareMode to true indicating to core 1 that user has activated time mode
+        setHardwareMode = true;
+
+        //Set updateRtcFlag to alert core 1 to update the display
+        updateRtcFlag = true;
+
+        //set the timeInitFlag 
+        timeInitFlag = true;
       }
+      
+      //If Countdown Mode Initiated by App...
+      else if(recDataBuf[0]=='C') {
+        Serial.println("Countdown Mode Initiated");
+
+        //Set setHardwareMode to false indicating to core 1 that user has activated countdown mode
+        setHardwareMode = false;
+
+        //Set updateRtcFlag to alert core 1 to update the display
+        updateRtcFlag = true;
+
+        //set the countdownInitFlag to run the countdownInit function once
+        countdownInitFlag = true;
+      }
+      
+      //If RGB LED Config Changed by App...
+      else if(recDataBuf[0]=='L') {
+        Serial.println("RGB LED Config");
+
+        //Format: L:A:BCD:EFG:HIJ:KLM
+        /*   A = LED Mode   = 1-8
+         * B-D = Brightness = 0-100
+         * E-G = R in RGB   = 0-255 
+         * H-J = G in RGB   = 0-255
+         * K-M = B in RGB   = 0-255
+         */
+       
+        //Read LED Mode 
+        if(recDataBuf[2] == '1') {
+          //Mode 1 - Rainbow Cycle
+          ledModeNum = 1;
+        }
+        else if(recDataBuf[2] == '2') {
+          //Mode 2 - Breath
+          ledModeNum = 2;
+        }
+        else if(recDataBuf[2] == '3') {
+          //Mode 3 - Fade
+          ledModeNum = 3;
+        }
+        else if(recDataBuf[2] == '4') {
+          //Mode 4 - Theater Chase
+          ledModeNum = 4;
+        }
+        else if(recDataBuf[2] == '5') {
+          //Mode 5 - Theater Chase Rainbow
+          ledModeNum = 5;
+        }
+        else if(recDataBuf[2] == '6') {
+          //Mode 6 - Running Lights
+          ledModeNum = 6;
+        }
+        else if(recDataBuf[2] == '7') {
+          //Mode 7 - Merry Christmas
+          ledModeNum = 7;
+        }
+        else if(recDataBuf[2] == '8') {
+          //Mode 8 - Static
+          ledModeNum = 8;
+        }
+        
+        //Read LED brightness
+        ledBrightnessVar = (String(recDataBuf[4]) + String(recDataBuf[5]) + String(recDataBuf[6])).toInt();
+        
+        //Read LED Color
+        redVar = (String(recDataBuf[8]) + String(recDataBuf[9]) + String(recDataBuf[10])).toInt(); 
+        greenVar = (String(recDataBuf[12]) + String(recDataBuf[13]) + String(recDataBuf[14])).toInt(); 
+        blueVar = (String(recDataBuf[16]) + String(recDataBuf[17]) + String(recDataBuf[18])).toInt();
+
+        //set updateLedFlag to alert core 1 to update the RGB LEDs
+        updateLedFlag = true;
+      }
+    }
+    //If no data is received from app and core 0 is not busy processing that data...
+    else {
+      //Slow blink comLed to indicate to user that hardware is connected to app and waiting for commands from app side
+      digitalWrite(comLed,HIGH);
+      delay(200);
+      digitalWrite(comLed,LOW);
+      delay(200);
     }
   }
 }
@@ -527,7 +484,7 @@ void codeForTask1(void * parameter) {
     //If it has been 10mins since power on or the previous run of the cathode protection routine...
     if(millis() - catProInitTime > 600000) {
       //Run cathode protection and serial print result
-      Serial.println(num2disp_runCathodePoisoningProtection(15, CATHODE_PROTECTION_STYLE_WAVE));
+      display.runProtection(CATHODE_PROTECTION_STYLE_SEQUENTIAL, 5000);
       catProInitTime = millis(); //Reset catProInitTime to current time
     }
 
@@ -536,13 +493,13 @@ void codeForTask1(void * parameter) {
       //If time mode is activated by user...
       if(setHardwareMode == true) {
         if(timeInitFlag) {
-          num2disp_clearNumberFromFullDisplay();
+          display.clear();
           timeInitFlag = false;
         }
         rtcTimeConcat = (String(pcf2129rtcInstance.readRtcHourBCD1())+String(pcf2129rtcInstance.readRtcHourBCD0())+String(pcf2129rtcInstance.readRtcMinBCD1())+String(pcf2129rtcInstance.readRtcMinBCD0())+String(pcf2129rtcInstance.readRtcSecBCD1())+String(pcf2129rtcInstance.readRtcSecBCD0())).toInt();
         if(rtcTimeConcat != rtcTimeConcatPrev) {
           //drive nixie and serial print result
-          num2disp_writeNumberToFullDisplay(rtcTimeConcat, rtcTimeConcatPrev, true);
+          display.write(rtcTimeConcat);
           rtcTimeConcatPrev = rtcTimeConcat;
         }
       }
@@ -561,7 +518,7 @@ void codeForTask1(void * parameter) {
         
         if(countdownInitFlag) {
           //Clear tubes
-          num2disp_clearNumberFromFullDisplay();
+          display.clear();
 
           //saving rxHour, rxMin, rxSec into vars for later use
           countdownHour = rxHour;
@@ -595,12 +552,12 @@ void codeForTask1(void * parameter) {
 
           countdownInitTime = (formattedRxHourString+formattedRxMinString+formattedRxSecString).toInt();
           
-          num2disp_writeNumberToFullDisplay(countdownInitTime, countdownInitTimePrev, true);
+          display.write(countdownInitTime);
 
           if(countdownSec == 0) {
             if(countdownMin == 0) {
               if(countdownHour == 0) {
-                num2disp_writeNumberToFullDisplay(0, 0, true);
+                display.write(0);
               } else {
                 countdownHour -= 1;
                 countdownMin = 59;
@@ -639,15 +596,15 @@ void codeForTask1(void * parameter) {
             }
   
             countdownTime = (formattedCountdownHourString+formattedCountdownMinString+formattedCountdownSecString).toInt();
+            display.write(countdownTime);
             Serial.println(countdownTime);
-            num2disp_writeNumberToFullDisplay(countdownTime, countdownTimePrev, true);
   
             countdownTimePrev = countdownTime;
   
             if(countdownSec == 0) {
               if(countdownMin == 0) {
                 if(countdownHour == 0) {
-                  num2disp_writeNumberToFullDisplay(0, 0, true);
+                  display.write(0);
                 } else {
                   countdownHour -= 1;
                   countdownMin = 59;

@@ -221,6 +221,9 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
             tvBTStatusMonitor.setText(R.string.connected_to_text);
             tvBTStatusMonitor.append(" ");
             tvBTStatusMonitor.append(String.format(resources.getString(R.string.remote_device_name_text), remoteDeviceName));
+
+            Toast.makeText(getApplicationContext(),"Successfully connected to Nixie Clock!",Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getApplicationContext(), Home.class)); //Go to home activity
         }
     };
 
@@ -232,42 +235,6 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
         }
     };
 
-    //The code in this handler will execute when an incoming message is detected
-    @SuppressLint("HandlerLeak")
-    //Looper.getMainLooper()).postDelayed(new Runnable() {
-    public final Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            Bundle recBundle = msg.getData();
-            String incomingMessage = recBundle.getString("incomingMessage");
-            Log.d(TAG,"HandlerMsg: " + incomingMessage);
-
-            //Send to incomingMessage string into a char array for further processing
-            assert incomingMessage != null; //Make sure incomingMessage isn't null... Will cause a null pointer exception if its null
-            char[] ch = new char[incomingMessage.length()];
-            for (int i = 0; i < incomingMessage.length(); i++) {
-                ch[i] = incomingMessage.charAt(i);
-            }
-
-            //Level 1 Check (Refer to software documentation for security verification procedure)
-            if(ch[0]=='R' && ch[1]=='E' && ch[2]=='Q' && ch[3]=='_' && ch[4]=='C' && ch[5]=='H' && ch[6]=='E' && ch[7]=='C' && ch[8]=='K' && ch[9]=='_' && ch[10]=='1') {
-                mBluetoothConnectionService.write(("REQ_CONN").getBytes(Charset.defaultCharset()));
-            }
-
-            //Level 1 Check Pass
-            if(ch[0]=='C' && ch[1]=='O' && ch[2]=='N' && ch[3]=='N' && ch[4]=='_' && ch[5]=='P' && ch[6]=='A' && ch[7]=='S' && ch[8]=='S') {
-                Toast.makeText(getApplicationContext(),"Successfully connected to Nixie Clock!",Toast.LENGTH_SHORT).show();
-                //Go to home activity
-                startActivity(new Intent(getApplicationContext(), Home.class));
-            }
-
-            //Level 1 Check Fail
-            if(ch[0]=='C' && ch[1]=='O' && ch[2]=='N' && ch[3]=='N' && ch[4]=='_' && ch[5]=='F' && ch[6]=='A' && ch[7]=='I' && ch[8]=='L') {
-                mBluetoothConnectionService.write(("REQ_CONN").getBytes(Charset.defaultCharset()));
-                Toast.makeText(getApplicationContext(),"Re-connecting with hardware!",Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
     //When we bind with BluetoothConnectionService... ServiceConnection is used to communicate with the service we have bound with
     private final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -275,10 +242,6 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
         public void onServiceConnected(ComponentName name, IBinder service) {
             LocalBinder mBinder = (LocalBinder) service;
             mBluetoothConnectionService = mBinder.getService();
-
-            //Can't pass the handler through the constructor of the service class (no point having a constructor in a service class so
-            //we gotta pass it through a method that I coded into the service (something like a setter method)
-            mBluetoothConnectionService.setHandler(handler);
 
             isBound = true;
         }
