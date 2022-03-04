@@ -47,7 +47,9 @@ public class LedControl extends AppCompatActivity implements View.OnClickListene
     int ledMode8RadBtnId = 8;
 
     Slider ledBrightnessSlider;
-    Slider ledColorSlider;
+    Slider ledColorSliderRed;
+    Slider ledColorSliderGreen;
+    Slider ledColorSliderBlue;
 
     Button btnConfigLeds;
 
@@ -57,7 +59,7 @@ public class LedControl extends AppCompatActivity implements View.OnClickListene
     int ledModeNum;
     int ledBrightnessNum;
     String ledBrightnessNumString;
-    int ledColorHexNumAsDec;
+    long ledColorHexNumAsDec;
     int rgbR;
     String rgbRString;
     int rgbG;
@@ -92,7 +94,9 @@ public class LedControl extends AppCompatActivity implements View.OnClickListene
         ledMode8RadBtn = findViewById(R.id.RadioButton_LED_Mode8);
         ledMode8RadBtn.setId(ledMode8RadBtnId);
         ledBrightnessSlider = findViewById(R.id.Slider_LED_Brightness);
-        ledColorSlider = findViewById(R.id.Slider_LED_Color);
+        ledColorSliderRed = findViewById(R.id.Slider_LED_Color_Red);
+        ledColorSliderGreen = findViewById(R.id.Slider_LED_Color_Green);
+        ledColorSliderBlue = findViewById(R.id.Slider_LED_Color_Blue);
         btnConfigLeds = findViewById(R.id.Button_Config_LEDs);
 
         scaleUp = AnimationUtils.loadAnimation(this,R.anim.scale_up);
@@ -147,25 +151,14 @@ public class LedControl extends AppCompatActivity implements View.OnClickListene
         //If brightness slider value has changed...
         ledBrightnessSlider.addOnChangeListener((slider, value, fromUser) -> ledBrightnessNum = Math.round(value));
 
-        //If color slider value has changed...
-        ledColorSlider.addOnChangeListener((slider, value, fromUser) -> {
-            ledColorHexNumAsDec = Math.round(value);
+        //If red color slider value has changed...
+        ledColorSliderRed.addOnChangeListener((slider, value, fromUser) -> rgbR = Math.round(value));
 
-            //LED Color Hex to RGB Conversion
-            //Convert the hex number to string and store in char array
-            char[] hexToRgbArray = String.valueOf(ledColorHexNumAsDec).toCharArray();
+        //If red color slider value has changed...
+        ledColorSliderGreen.addOnChangeListener((slider, value, fromUser) -> rgbG = Math.round(value));
 
-            //Splitting the hex digits (first 2 digits go to red... next 2 digits go to green... last 2 digits go to blue)
-            if(hexToRgbArray.length > 1) {
-                rgbR = Integer.parseInt(hexToRgbArray[0] + String.valueOf(hexToRgbArray[1]));
-                rgbG = Integer.parseInt(String.valueOf(hexToRgbArray[2]) + hexToRgbArray[3]);
-                rgbB = Integer.parseInt(String.valueOf(hexToRgbArray[4]) + hexToRgbArray[5]);
-            } else {
-                rgbR = 0;
-                rgbG = 0;
-                rgbB = 0;
-            }
-        });
+        //If red color slider value has changed...
+        ledColorSliderBlue.addOnChangeListener((slider, value, fromUser) -> rgbB = Math.round(value));
 
         IntentFilter BTDisconnectedFromRemoteDeviceIntent = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         registerReceiver(BTDisconnectedBroadcastReceiver, BTDisconnectedFromRemoteDeviceIntent);

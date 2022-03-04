@@ -21,9 +21,12 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +46,8 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
     Button btnBtListPairedDevices;
     Button btnGoToBtSettings;
     Button btnDisconnect;
+
+    RelativeLayout loadingCircleLayout;
 
     Animation scaleUp;
     Animation scaleDown;
@@ -81,6 +86,9 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
         btnBtListPairedDevices = findViewById(R.id.Button_List_Paired_Devices);
         btnGoToBtSettings = findViewById(R.id.Button_GoTo_Bluetooth_Settings);
         btnDisconnect = findViewById(R.id.Button_Bluetooth_Disconnect);
+
+        loadingCircleLayout = findViewById(R.id.Loading_Circle_Layout);
+        loadingCircleLayout.setVisibility(View.VISIBLE);
 
         scaleUp = AnimationUtils.loadAnimation(this,R.anim.scale_up);
         scaleDown = AnimationUtils.loadAnimation(this,R.anim.scale_down);
@@ -209,7 +217,6 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
         mBluetoothConnectionService.cancelConnectedThread();
     }
 
-    // Broadcast receivers to monitor Bluetooth connection status and update tvBTStatusMonitor
     //This code will execute when the bt connected broadcast is received
     private final BroadcastReceiver BTConnectedBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -220,6 +227,7 @@ public class SplashScreen extends AppCompatActivity implements PairedDevicesRVCl
             tvBTStatusMonitor.append(String.format(resources.getString(R.string.remote_device_name_text), remoteDeviceName));
 
             Toast.makeText(getApplicationContext(),"Successfully connected to Nixie Clock!",Toast.LENGTH_SHORT).show();
+
             startActivity(new Intent(getApplicationContext(), Home.class)); //Go to home activity
         }
     };

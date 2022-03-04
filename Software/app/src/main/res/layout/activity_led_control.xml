@@ -150,18 +150,85 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/Slider_LED_Brightness" />
 
+        <TextView
+            android:id="@+id/TextView_SubSub_Title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="80dp"
+            android:text="Red"
+            android:textColor="#FF0000"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Brightness" />
+
         <com.google.android.material.slider.Slider
-            android:id="@+id/Slider_LED_Color"
-            android:layout_width="wrap_content"
+            android:id="@+id/Slider_LED_Color_Red"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
             android:contentDescription="@string/desc_led_color_slider"
             android:stepSize="1"
             android:value="20.0"
             android:valueFrom="0"
-            android:valueTo="16777215"
+            android:valueTo="255"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/TextView_Sub_Title3"
+            app:layout_constraintTop_toTopOf="@id/TextView_SubSub_Title1"
+            app:labelBehavior="gone" />
+
+        <TextView
+            android:id="@+id/TextView_SubSub_Title2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="80dp"
+            android:text="Green"
+            android:textColor="#00FF00"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Color_Red" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/Slider_LED_Color_Green"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/desc_led_color_slider"
+            android:stepSize="1"
+            android:value="20.0"
+            android:valueFrom="0"
+            android:valueTo="255"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/TextView_SubSub_Title2"
+            app:labelBehavior="gone" />
+
+        <TextView
+            android:id="@+id/TextView_SubSub_Title3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="80dp"
+            android:text="Blue"
+            android:textColor="#0000FF"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Color_Green" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/Slider_LED_Color_Blue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/desc_led_color_slider"
+            android:stepSize="1"
+            android:value="20.0"
+            android:valueFrom="0"
+            android:valueTo="255"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/TextView_SubSub_Title3"
             app:labelBehavior="gone" />
 
         <Button
@@ -180,6 +247,6 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/Slider_LED_Color" />
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Color_Blue" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
