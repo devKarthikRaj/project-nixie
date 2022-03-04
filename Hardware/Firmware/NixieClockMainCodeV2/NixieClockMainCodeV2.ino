@@ -201,7 +201,7 @@ void setup() {
   display.init(); //Initialize display
 
   //Run cathode protection
-  display.runProtection(CATHODE_PROTECTION_STYLE_SEQUENTIAL, 5000);
+  display.runProtection(CATHODE_PROTECTION_STYLE_SEQUENTIAL, 1000);
 
   //Start Nixie Clock in time mode from 000000
   int initTime=0;
@@ -290,16 +290,12 @@ void platformDelayMs(uint32_t ms)
  */
 void codeForTask0(void * parameter) {
   while(1) {
-    
-    //This is the time when user enters the mobile app's home page to config the clock
-    unsigned long initTime = millis();
-
     //If app data has been received from app side...
     if(espBt.available()) {
       //Receive data from app via Bt
       String recDataString = espBt.readString();
-      Serial.println("Data Received From App: " + recDataString);
-      Serial.println("Processing Data Received...");
+      //Serial.println("Data Received From App: " + recDataString);
+      //Serial.println("Processing Data Received...");
       
       //Clear the array
       for(int i=0; i<20; i++) {
@@ -370,7 +366,7 @@ void codeForTask0(void * parameter) {
         }
         else if(recDataBuf[4] == ':') {
           //Format: T:HH:M:S or C:HH:M:S
-          Serial.println("2");    
+          //Serial.println("2");    
           rxHour = (String(recDataBuf[2])+String(recDataBuf[3])).toInt();
           rxMin = (String(recDataBuf[5])).toInt();
           rxSec = (String(recDataBuf[7])).toInt();
@@ -379,7 +375,7 @@ void codeForTask0(void * parameter) {
       
       //If Time Mode Initiated by App...
       if(recDataBuf[0]=='T') {  
-        Serial.println("Time Mode Initiated");
+        //Serial.println("Time Mode Initiated");
 
         //Set setHardwareMode to true indicating to core 1 that user has activated time mode
         setHardwareMode = true;
@@ -393,7 +389,7 @@ void codeForTask0(void * parameter) {
       
       //If Countdown Mode Initiated by App...
       else if(recDataBuf[0]=='C') {
-        Serial.println("Countdown Mode Initiated");
+        //Serial.println("Countdown Mode Initiated");
 
         //Set setHardwareMode to false indicating to core 1 that user has activated countdown mode
         setHardwareMode = false;
@@ -407,7 +403,7 @@ void codeForTask0(void * parameter) {
       
       //If RGB LED Config Changed by App...
       else if(recDataBuf[0]=='L') {
-        Serial.println("RGB LED Config");
+        //Serial.println("RGB LED Config");
 
         //Format: L:A:BCD:EFG:HIJ:KLM
         /*   A = LED Mode   = 1-8
@@ -467,17 +463,17 @@ void codeForTask0(void * parameter) {
     else {
       //Slow blink comLed to indicate to user that hardware is connected to app and waiting for commands from app side
       digitalWrite(comLed,HIGH);
-      delay(200);
+      vTaskDelay(pdMS_TO_TICKS(200));
       digitalWrite(comLed,LOW);
-      delay(200);
+      vTaskDelay(pdMS_TO_TICKS(200));
     }
   }
 }
 
 /* Core 1
- *  Drive Nixies when seconds interrupt is triggered by RTC
- *  Drive RGB LEDs
- *  Nixie Tube Cathode Protection
+ *  Nixie Tube Cathode Protection (highest priority)
+ *  Drive Nixies when RTC seconds interrupt triggered
+ *  Drive RGB LEDs (lowest priority)
  */
 void codeForTask1(void * parameter) {
   while(1) {
@@ -487,6 +483,88 @@ void codeForTask1(void * parameter) {
       display.runProtection(CATHODE_PROTECTION_STYLE_SEQUENTIAL, 5000);
       catProInitTime = millis(); //Reset catProInitTime to current time
     }
+
+     //If the updateRtcFlag has been set, it means that the hardware has received a command from the user 
+      //through the mobile app to update the display
+      if(updateRtcFlag == true) {
+        //If time mode is activated by user...
+        if(setHardwareMode == true) {
+          pcf2129rtcInstance.updateCurrentTimeToRTC(rxHour, rxMin, rxSec); //(HOUR,MIN,SEC)
+        }
+        //If countdown mode is activated by user...
+        else {
+          //-1 the rxSec cuz in the time taken by the rtc to update the nixie tube... 1s has already passed!!!
+          if(rxSec > 0) {
+            pcf2129rtcInstance.updateCurrentTimeToRTC(rxHour, rxMin, rxSec-1); //(HOUR,MIN,SEC)
+          }
+          //Boundary Conditions
+          //If rxSec is already 0, then rxSec-1 will be -1, so write 59
+          else if(rxSec == 0){
+            if(rxMin > 0) {
+              pcf2129rtcInstance.updateCurrentTimeToRTC(rxHour, rxMin-1, 59); //(HOUR,MIN,SEC)
+            }
+            //If rxMin and rxSec are already 0, then rxSec-1 and rxMin-1 will be -1, so write 59
+            else if(rxMin == 0) {
+              if(rxHour > 0) {
+                pcf2129rtcInstance.updateCurrentTimeToRTC(rxHour-1, 59, 59); //(HOUR,MIN,SEC)
+              }
+            }
+          }
+        }
+        updateRtcFlag = false; //Reset the updateRtcFlag
+      }
+      
+      //Drive the RGB LEDs
+      //If the updateLedFlag has been set, it means that the hardware has received a command from the user
+      //through the mobile app to update the RGB LEDs
+      if(updateLedFlag == true) {
+        //Check and Set LED Mode
+        switch(ledModeNum) {
+          case 1:
+                  //Serial.println("RGB LED set to Rainbow Mode");
+                  ws2812fx.setMode(FX_MODE_RAINBOW_CYCLE);  
+                  break;
+          case 2:
+                  //Serial.println("RGB LED set to Breath Mode");
+                  ws2812fx.setMode(FX_MODE_BREATH);
+                  break;
+          case 3:
+                  //Serial.println("RGB LED set to Fade Mode");
+                  ws2812fx.setMode(FX_MODE_FADE);  
+                  break;
+          case 4:
+                  //Serial.println("RGB LED set to Theater Chase Mode");
+                  ws2812fx.setMode(FX_MODE_THEATER_CHASE);
+                  break;
+          case 5:
+                  //Serial.println("RGB LED set to Theater Chase Rainbow Mode");
+                  ws2812fx.setMode(FX_MODE_THEATER_CHASE_RAINBOW);  
+                  break;
+          case 6:
+                  //Serial.println("RGB LED set to Running Lights Mode");
+                  ws2812fx.setMode(FX_MODE_RUNNING_LIGHTS);
+                  break;
+          case 7:
+                  //Serial.println("RGB LED set to Merry Christmas Mode");
+                  ws2812fx.setMode(FX_MODE_MERRY_CHRISTMAS);  
+                  break;
+          case 8:
+                  //Serial.println("RGB LED set to Static Mode");
+                  ws2812fx.setMode(FX_MODE_STATIC);
+                  break;      
+        }
+        
+        //Check and Set LED Brightness 
+        //Serial.println("LED Brightness Set To: " + String(ledBrightnessVar));  
+        ws2812fx.setBrightness(ledBrightnessVar);
+        
+        //Check and Set LED Color
+        //Serial.println("LED Color Set to RGB: " + String(redVar) + "," + String(greenVar) + "," + String(blueVar));  
+        ws2812fx.setColor(redVar,greenVar,blueVar);
+        
+        updateLedFlag = false; //Reset the updateLEDFlag
+      }
+      ws2812fx.service();
 
     //If RTC seconds interrupt triggered...
     if(secIntFlag == true) {
@@ -498,7 +576,7 @@ void codeForTask1(void * parameter) {
         }
         rtcTimeConcat = (String(pcf2129rtcInstance.readRtcHourBCD1())+String(pcf2129rtcInstance.readRtcHourBCD0())+String(pcf2129rtcInstance.readRtcMinBCD1())+String(pcf2129rtcInstance.readRtcMinBCD0())+String(pcf2129rtcInstance.readRtcSecBCD1())+String(pcf2129rtcInstance.readRtcSecBCD0())).toInt();
         if(rtcTimeConcat != rtcTimeConcatPrev) {
-          //drive nixie and serial print result
+          //drive nixie
           display.write(rtcTimeConcat);
           rtcTimeConcatPrev = rtcTimeConcat;
         }
@@ -578,45 +656,45 @@ void codeForTask1(void * parameter) {
         } else {
           if(countdownHour<10) {
               formattedCountdownHourString= "0"+String(countdownHour);
-            }
-            else {
-              formattedCountdownHourString = String(countdownHour);
-            }
-            if(countdownMin<10) {
-              formattedCountdownMinString = "0"+String(countdownMin);
-            }
-            else {
-              formattedCountdownMinString = String(countdownMin);
-            }
-            if(countdownSec<10) {
-              formattedCountdownSecString = "0"+String(countdownSec);
-            }
-            else {
-              formattedCountdownSecString = String(countdownSec);
-            }
-  
-            countdownTime = (formattedCountdownHourString+formattedCountdownMinString+formattedCountdownSecString).toInt();
-            display.write(countdownTime);
-            Serial.println(countdownTime);
-  
-            countdownTimePrev = countdownTime;
-  
-            if(countdownSec == 0) {
-              if(countdownMin == 0) {
-                if(countdownHour == 0) {
-                  display.write(0);
-                } else {
-                  countdownHour -= 1;
-                  countdownMin = 59;
-                  countdownSec = 59; 
-                }
+          }
+          else {
+            formattedCountdownHourString = String(countdownHour);
+          }
+          if(countdownMin<10) {
+            formattedCountdownMinString = "0"+String(countdownMin);
+          }
+          else {
+            formattedCountdownMinString = String(countdownMin);
+          }
+          if(countdownSec<10) {
+            formattedCountdownSecString = "0"+String(countdownSec);
+          }
+          else {
+            formattedCountdownSecString = String(countdownSec);
+          }
+
+          countdownTime = (formattedCountdownHourString+formattedCountdownMinString+formattedCountdownSecString).toInt();
+          display.write(countdownTime);
+          //Serial.println(countdownTime);
+
+          countdownTimePrev = countdownTime;
+
+          if(countdownSec == 0) {
+            if(countdownMin == 0) {
+              if(countdownHour == 0) {
+                display.write(0);
               } else {
-                countdownMin -=1;
-                countdownSec = 59;
+                countdownHour -= 1;
+                countdownMin = 59;
+                countdownSec = 59; 
               }
             } else {
-              countdownSec -= 1;
+              countdownMin -=1;
+              countdownSec = 59;
             }
+          } else {
+            countdownSec -= 1;
+          }
         }
       } 
   
@@ -626,93 +704,13 @@ void codeForTask1(void * parameter) {
       
       //Flash OpsLed to indicate rtc seconds interrupt successful triggering
       digitalWrite(opsLed,HIGH);
-      delay(50);
+      vTaskDelay(pdMS_TO_TICKS(50));
       digitalWrite(opsLed,LOW);
     }
     //Code inside the else loop will execute if the core is not busy driving the nixies
     //Priority is given to driving the nixies and cathode protection!!!
     else {
-      //If the updateRtcFlag has been set, it means that the hardware has received a command from the user 
-      //through the mobile app to update the display
-      if(updateRtcFlag == true) {
-        //If time mode is activated by user...
-        if(setHardwareMode == true) {
-          pcf2129rtcInstance.updateCurrentTimeToRTC(rxHour, rxMin, rxSec); //(HOUR,MIN,SEC)
-        }
-        //If countdown mode is activated by user...
-        else {
-          //-1 the rxSec cuz in the time taken by the rtc to update the nixie tube... 1s has already passed!!!
-          if(rxSec > 0) {
-            pcf2129rtcInstance.updateCurrentTimeToRTC(rxHour, rxMin, rxSec-1); //(HOUR,MIN,SEC)
-          }
-          //Boundary Conditions
-          //If rxSec is already 0, then rxSec-1 will be -1, so write 59
-          else if(rxSec == 0){
-            if(rxMin > 0) {
-              pcf2129rtcInstance.updateCurrentTimeToRTC(rxHour, rxMin-1, 59); //(HOUR,MIN,SEC)
-            }
-            //If rxMin and rxSec are already 0, then rxSec-1 and rxMin-1 will be -1, so write 59
-            else if(rxMin == 0) {
-              if(rxHour > 0) {
-                pcf2129rtcInstance.updateCurrentTimeToRTC(rxHour-1, 59, 59); //(HOUR,MIN,SEC)
-              }
-            }
-          }
-        }
-        updateRtcFlag = false; //Reset the updateRtcFlag
-      }
-      
-      //Drive the RGB LEDs
-      //If the updateLedFlag has been set, it means that the hardware has received a command from the user
-      //through the mobile app to update the RGB LEDs
-      if(updateLedFlag == true) {
-        //Check and Set LED Mode
-        switch(ledModeNum) {
-          case 1:
-                  Serial.println("RGB LED set to Rainbow Mode");
-                  ws2812fx.setMode(FX_MODE_RAINBOW_CYCLE);  
-                  break;
-          case 2:
-                  Serial.println("RGB LED set to Breath Mode");
-                  ws2812fx.setMode(FX_MODE_BREATH);
-                  break;
-          case 3:
-                  Serial.println("RGB LED set to Fade Mode");
-                  ws2812fx.setMode(FX_MODE_FADE);  
-                  break;
-          case 4:
-                  Serial.println("RGB LED set to Theater Chase Mode");
-                  ws2812fx.setMode(FX_MODE_THEATER_CHASE);
-                  break;
-          case 5:
-                  Serial.println("RGB LED set to Theater Chase Rainbow Mode");
-                  ws2812fx.setMode(FX_MODE_THEATER_CHASE_RAINBOW);  
-                  break;
-          case 6:
-                  Serial.println("RGB LED set to Running Lights Mode");
-                  ws2812fx.setMode(FX_MODE_RUNNING_LIGHTS);
-                  break;
-          case 7:
-                  Serial.println("RGB LED set to Merry Christmas Mode");
-                  ws2812fx.setMode(FX_MODE_MERRY_CHRISTMAS);  
-                  break;
-          case 8:
-                  Serial.println("RGB LED set to Static Mode");
-                  ws2812fx.setMode(FX_MODE_STATIC);
-                  break;      
-        }
-        
-        //Check and Set LED Brightness 
-        Serial.println("LED Brightness Set To: " + String(ledBrightnessVar));  
-        ws2812fx.setBrightness(ledBrightnessVar);
-        
-        //Check and Set LED Color
-        Serial.println("LED Color Set to RGB: " + String(redVar) + "," + String(greenVar) + "," + String(blueVar));  
-        ws2812fx.setColor(redVar,greenVar,blueVar);
-        
-        updateLedFlag = false; //Reset the updateLEDFlag
-      }
-      ws2812fx.service();
+      //stuff
     }
   }
 }
