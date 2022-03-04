@@ -707,10 +707,5 @@ void codeForTask1(void * parameter) {
       vTaskDelay(pdMS_TO_TICKS(50));
       digitalWrite(opsLed,LOW);
     }
-    //Code inside the else loop will execute if the core is not busy driving the nixies
-    //Priority is given to driving the nixies and cathode protection!!!
-    else {
-      //stuff
-    }
   }
 }
