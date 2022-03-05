@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LedControl"
+    android:background="#263238">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <TextView
+            android:id="@+id/TextView_Activity_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/title_led_control"
+            android:textColor="@color/colorPrimary"
+            android:textSize="50sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/TextView_Sub_Title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="50dp"
+            android:paddingTop="10dp"
+            android:text="@string/sub_title_select_led_mode"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/TextView_Activity_Title" />
+
+        <RadioGroup
+            android:id="@+id/RadioGroup_LED_Mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/TextView_Sub_Title1">
+
+            <RadioButton
+                android:id="@+id/RadioButton_LED_Mode1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_disp_led_mode1"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_LED_Mode2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_disp_led_mode2"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_LED_Mode3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_disp_led_mode3"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_LED_Mode4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_disp_led_mode4"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_LED_Mode5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_disp_led_mode5"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_LED_Mode6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_disp_led_mode6"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_LED_Mode7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_disp_led_mode7"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/RadioButton_LED_Mode8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/radio_btn_disp_led_mode8"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/TextView_Sub_Title2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="400dp"
+            android:text="@string/sub_title_select_led_brightness"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/RadioGroup_LED_Mode" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/Slider_LED_Brightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:contentDescription="@string/desc_led_brightness_slider"
+            android:stepSize="1"
+            android:value="20.0"
+            android:valueFrom="0.0"
+            android:valueTo="100.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/TextView_Sub_Title2" />
+
+        <TextView
+            android:id="@+id/TextView_Sub_Title3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="40dp"
+            android:text="@string/sub_title_select_led_color"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Brightness" />
+
+        <TextView
+            android:id="@+id/TextView_SubSub_Title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="80dp"
+            android:text="Red"
+            android:textColor="#FF0000"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Brightness" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/Slider_LED_Color_Red"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/desc_led_color_slider"
+            android:stepSize="1"
+            android:value="20.0"
+            android:valueFrom="0"
+            android:valueTo="255"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/TextView_SubSub_Title1"
+            app:labelBehavior="gone" />
+
+        <TextView
+            android:id="@+id/TextView_SubSub_Title2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="80dp"
+            android:text="Green"
+            android:textColor="#00FF00"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Color_Red" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/Slider_LED_Color_Green"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/desc_led_color_slider"
+            android:stepSize="1"
+            android:value="20.0"
+            android:valueFrom="0"
+            android:valueTo="255"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/TextView_SubSub_Title2"
+            app:labelBehavior="gone" />
+
+        <TextView
+            android:id="@+id/TextView_SubSub_Title3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="80dp"
+            android:text="Blue"
+            android:textColor="#0000FF"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Color_Green" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/Slider_LED_Color_Blue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/desc_led_color_slider"
+            android:stepSize="1"
+            android:value="20.0"
+            android:valueFrom="0"
+            android:valueTo="255"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/TextView_SubSub_Title3"
+            app:labelBehavior="gone" />
+
+        <Button
+            android:id="@+id/Button_Config_LEDs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="@color/colorAccent"
+            android:contentDescription="@string/btn_desc_config_led"
+            android:text="@string/btn_disp_config_led"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/Slider_LED_Color_Blue" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

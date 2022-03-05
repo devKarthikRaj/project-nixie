@@ -1,0 +1,88 @@
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Nixie</string>
+
+    <!-- BT Texts -->
+    <string name="connect_to_nixie_text">Connect to your Nixie Clock</string>
+    <string name="bt_status_monitor_ready_text">Ready to connect to remote device&#8230;</string>
+    <string name="connected_to_text">Connected to</string>
+    <string name="remote_device_name_text">%1$s</string>
+    <string name="remote_device_address">%1$s</string>
+    <string name="disconnected_text">Disconnected from remote device</string>
+    <string name="rv_paired_devices_title_text">Bluetooth Name</string>
+    <string name="rv_paired_devices_mac_addr_text">Bluetooth MAC Address</string>
+
+    <!-- Button & Radio Button Texts -->
+    <string name="btn_label_time_mode">Time</string>
+    <string name="btn_label_countdown_mode">Countdown</string>
+    <string name="btn_label_led_control">LED</string>
+    <string name="btn_disp_list_paired_devices">List Paired Devices</string>
+    <string name="btn_disp_goto_bt_settings">Pair New Devices</string>
+    <string name="btn_disp_disconnect">Disconnect from remote device</string>
+    <string name="btn_disp_display_on_nixie">Display on Nixie</string>
+    <string name="btn_disp_update_params">Update Parameters</string>
+    <string name="radio_btn_disp_led_mode1">Rainbow Cycle</string>
+    <string name="radio_btn_disp_led_mode2">Breath</string>
+    <string name="radio_btn_disp_led_mode3">Fade</string>
+    <string name="radio_btn_disp_led_mode4">Theater Chase</string>
+    <string name="radio_btn_disp_led_mode5">Theater Chase Rainbow</string>
+    <string name="radio_btn_disp_led_mode6">Running Lights</string>
+    <string name="radio_btn_disp_led_mode7">Merry Christmas</string>
+    <string name="radio_btn_disp_led_mode8">Static</string>
+    <string name="btn_disp_config_led">Configure LEDs</string>
+
+    <!-- Button Desc -->
+    <string name="btn_desc_time_mode">Pressing this button will lead to the Time Mode Activity</string>
+    <string name="btn_desc_date_mode">Pressing this button will lead to the Date Mode Activity</string>
+    <string name="btn_desc_countdown_mode">Pressing this button will lead to the Countdown Mode Activity</string>
+    <string name="btn_desc_led_control">Pressing this button will lead to the LED Control Activity</string>
+    <string name="btn_desc_status_monitor">Pressing this button will lead to the Status Monitor Activity</string>
+    <string name="btn_desc_manual_time">Pressing this button will lead to a timepicker fragment to select time</string>
+    <string name="btn_desc_system_time">Pressing this button will fetch the current android system time</string>
+    <string name="btn_desc_display_on_nixie">Pressing this button will update the nixie hardware with time/date chosen</string>
+    <string name="btn_desc_config_led">Pressing this button will update the RGB LEDs in the hardware</string>
+    <string name="btn_desc_update_params">Pressing this button will update the parameters in the status monitor activity</string>
+
+    <!-- Slide Switch Display Text -->
+    <string name="ss_disp_text_1">Disable Bluetooth Verification</string>
+
+    <!-- Misc Desc -->
+    <string name="desc_alert_dialog_key">This is a key image to illustrate to user that they need to enter the bt verification key</string>
+    <string name="desc_led_brightness_slider">LED brightness slider</string>
+    <string name="desc_led_color_slider">LED color slider</string>
+
+    <!-- Edit Text Hints -->
+    <string name="et_hint_hour_initial">Hours</string>
+    <string name="et_hint_mins_initial">Mins</string>
+    <string name="et_hint_secs_initial">Secs</string>
+    <string name="hint_enter_verification_key">Enter Verification Key&#8230;</string>
+
+    <!-- Titles -->
+    <string name="title_time_mode">Time Mode</string>
+    <string name="title_countdown_mode">Countdown Mode</string>
+    <string name="title_led_control">LED Control</string>
+    <string name="title_status_monitor">Status Monitor</string>
+
+    <!-- Menu Item Titles -->
+    <string name="menu_item_text1">Status Monitor</string>
+    <string name="menu_item_text2">About</string>
+
+    <!-- Sub Titles -->
+    <string name="sub_title_set">Set Time</string>
+    <string name="sub_title_set_date">Set Date</string>
+    <string name="sub_title_manual">Manual</string>
+    <string name="sub_title_system">System</string>
+    <string name="sub_title_countdown_mode_title">Set Countdown Time</string>
+    <string name="sub_title_select_led_mode">Pick a Mode</string>
+    <string name="sub_title_select_led_brightness">Pick a Brightness</string>
+    <string name="sub_title_select_led_color">Pick a Color</string>
+    <string name="sub_title_bt_rssi">Bluetooth RSSI Value:</string>
+    <string name="sub_title_hw_core_temp">Core Temperature:</string>
+
+    <!-- Initial Display Texts -->
+    <string name="init_text_time_display">00:00:00</string>
+
+    <!-- User Help Texts -->
+    <string name="help_find_bt_key">The verification code can be found on the underside of your clock</string>
+    <string name="help_connect_with_hardware">*If Bluetooth disconnects while attempting to connect with your clock, please power reset the clock and try again!</string>
+</resources>
