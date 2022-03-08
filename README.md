@@ -7,7 +7,7 @@ Nixie Tubes were used back in the day to display numbers and text, until the wor
 ### Featuring our contraption...
 This project aims to bring back a relic of the past, but packed with modern tech. This clock comes with features like Wi-Fi, BLE, onboard sensors, ARGB lighting etc., all of which is controlled through a mobile app.<br />
 
-<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/Clock%20Hardware%20Latest.jpeg" alt="Nixie Clock" width="50%"/><img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/Clock%20Hardware%20v1.jpg" alt="Nixie Clock" width="50%"/><br />
+<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Media/Clock%20Hardware%20v1.jpg" alt="Nixie Clock" width="50%"/><img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Media/Clock%20Hardware%20v2.jpg" alt="Nixie Clock" width="50%"/><br />
 ___
 
 ## Design
@@ -16,7 +16,7 @@ Our Nixie clock is designed from the ground up with individual drivers for every
 
 The clock is housed in a 3D printed dark grey nylon enclosure, providing a high quality feel and look. <br>
 
-![alt text](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/clock.gif)
+![alt text](https://github.com/devKarthikRaj/project-nixie/blob/master/Media/Nixie%20Clock%20v2%20in%20Action%20gif.gif)
 
 ## Features
 - Wi-Fi/BLE for NTP sync/smart home functionality
