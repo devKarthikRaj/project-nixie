@@ -1,8 +1,8 @@
 # Project Nixie
 This repository contains hardware and software documentation for a Nixie tube clock created by two engineering students! <br>
 
-![Cover Image](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/Clock%20Hardware%20Latest.jpeg)
-![Cover Image](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/Clock%20Hardware%20v1.jpg)
+![Cover Image](https://github.com/devKarthikRaj/project-nixie/blob/master/Media/Clock%20Hardware%20Latest.jpeg)
+![Cover Image](https://github.com/devKarthikRaj/project-nixie/blob/master/Media/Clock%20Hardware%20v1.jpg)
 
 
 ### A lil bit of history...
@@ -21,7 +21,7 @@ Our Nixie clock is designed from the ground up with individual drivers for every
 
 The clock is housed in a 3D printed dark grey nylon enclosure, providing a high quality feel and look. <br>
 
-![alt text](https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/clock.gif)
+![alt text](https://github.com/devKarthikRaj/project-nixie/blob/master/Media/clock.gif)
 
 ### Notable Features
 - Wi-Fi/BLE for NTP sync/smart home functionality
