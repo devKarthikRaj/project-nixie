@@ -36,13 +36,14 @@
         <activity
             android:name=".Home"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="LockedOrientationActivity"
+            android:exported="true">
 
             <!-- Home screen as launcher only for dev -->
-            <!--<intent-filter>
+            <!-- <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter> -->
 
         </activity>
         <activity
