@@ -32,11 +32,11 @@ The clock is housed in a 3D printed dark grey nylon enclosure, providing a high 
 Our Nixie Tube clock can be controlled through our Android app - NixieCon. NixieCon connects to the hardware via Bluetooth. Download the app [here](https://github.com/devKarthikRaj/project-nixie/blob/master/Software/app/release/app-release.apk).<br>
 
 <div align="center">
-<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Home.jpg" alt="App Home" width="24%" />
-<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Time%20Mode.jpg" alt="App Time Mode" width="24%" />
-<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Countdown%20Mode.jpg" alt="App Countdown Mode" width="24%" />
-<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Media/App%20LED%20Control%201.jpg" alt="App LED Control" width="24%" />
-<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Media/App%20LED%20Control%202.jpg" alt="App LED Control" width="24%" />
+<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Home.jpg" alt="App Home" width="20%" />
+<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Time%20Mode.jpg" alt="App Time Mode" width="20%" />
+<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Countdown%20Mode.jpg" alt="App Countdown Mode" width="20%" />
+<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Media/App%20LED%20Control%201.jpg" alt="App LED Control" width="20%" />
+<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Media/App%20LED%20Control%202.jpg" alt="App LED Control" width="20%" />
 </div>
 
 ## Links
