@@ -35,7 +35,8 @@ Our Nixie Tube clock can be controlled through our Android app - NixieCon. Nixie
 <img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Home.jpg" alt="App Home" width="24%" />
 <img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Time%20Mode.jpg" alt="App Time Mode" width="24%" />
 <img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20Countdown%20Mode.jpg" alt="App Countdown Mode" width="24%" />
-<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Pictures/App%20LED%20Control.jpg" alt="App LED Control" width="24%" />
+<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Media/App%20LED%20Control%201.jpg" alt="App LED Control" width="24%" />
+<img src="https://github.com/devKarthikRaj/project-nixie/blob/master/Media/App%20LED%20Control%202.jpg" alt="App LED Control" width="24%" />
 </div>
 
 ## Links
