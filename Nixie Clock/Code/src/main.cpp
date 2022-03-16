@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <Wire.h> //I2C lib
 #include <pcf2129rtc.h> //RTC lib
 #include <NTC_PCA9698.h> //Port Expander lib
@@ -7,6 +8,10 @@
 
 bool platformGPIOWrite(uint8_t pin, bool data);
 void platformDelayMs(uint32_t ms);
+void disableSubsystems();
+void btTask(void * pvParameters);
+void ledTask(void * pvParameters);
+void nixieTask(void * pvParameters);
 
 /* Pin definitions */
 #define rtcInt          2 //RTC Interrupt 
@@ -23,13 +28,21 @@ void platformDelayMs(uint32_t ms);
 #define comLed         27 //Fast Blinking if not connected to app... Slow Blinking if connected to app
 
 
-/* Nixie tube pinouts */
+/* Nixie tube pinouts (HW Version 1)
 uint8_t pinout1[10] = {9, 0, 1, 2, 3, 4, 5, 6, 7, 8};
 uint8_t pinout2[10] = {27, 10, 11, 12, 13, 14, 15, 24, 25, 26};
 uint8_t pinout3[10] = {39, 28, 29, 30, 31, 34, 35, 36, 37, 38};
 uint8_t pinout4[10] = {49, 40, 41, 42, 43, 44, 45, 46, 47, 48};
 uint8_t pinout5[10] = {67, 50, 51, 52, 53, 54, 55, 64, 65, 66};
-uint8_t pinout6[10] = {79, 68, 69, 70, 71, 74, 75, 76, 77, 78};
+uint8_t pinout6[10] = {79, 68, 69, 70, 71, 74, 75, 76, 77, 78}; */
+
+/* Nixie tube pinouts (HW Version 2)*/
+uint8_t pinout1[10] = {5, 4, 3, 2, 1, 0, 9, 8, 7, 6};
+uint8_t pinout2[10] = {15, 14, 13, 12, 11, 10, 27, 26, 25, 24};
+uint8_t pinout3[10] = {35, 34, 31, 30, 29, 28, 39, 38, 37, 36};
+uint8_t pinout4[10] = {45, 44, 43, 42, 41, 40, 49, 48, 47, 46};
+uint8_t pinout5[10] = {55, 54, 53, 52, 51, 50, 67, 66, 65, 64};
+uint8_t pinout6[10] = {75, 74, 71, 70, 69, 68, 79, 78, 77, 76};
 
 /* Nixie tube driver-specific parameters */
 uint8_t active = 6; //6 active tubes
