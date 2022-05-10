@@ -53,8 +53,8 @@ pcf2129rtc pcf2129rtcInstance(twimIntSDA, twimIntSCL);
 BluetoothSerial espBt;
 WS2812FX ws2812fx = WS2812FX(6, ledBus, NEO_GRB + NEO_KHZ800);
 NixieDisplay display(active, offset, pinout1, pinout2, pinout3, pinout4, pinout5, pinout6);
-PCA9698 expanderChip0(0x20, twimIntSDA, twimIntSCL, 400000); //(I2C_ADDR,SDA,SCL,SPEED)
-PCA9698 expanderChip1(0x21, twimIntSDA, twimIntSCL, 400000);
+PCA9698 expanderChip0(0x20, twimIntSDA, twimIntSCL, (uint32_t)400000); //(I2C_ADDR,SDA,SCL,SPEED)
+PCA9698 expanderChip1(0x21, twimIntSDA, twimIntSCL, (uint32_t)400000);
 
 /* Global variables */
 bool setHardwareMode = true; //true = Time Mode | false = Countdown Mode | Default = Time Mode
