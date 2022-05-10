@@ -360,7 +360,7 @@ void btTask(void * pvParameters) {
    @param void
 */
 void nixieTask(void * pvParameters) {
-  Wire.begin(twimIntSDA, twimIntSCL, 100000);
+  Wire.begin(twimIntSDA, twimIntSCL, (uint32_t)100000);
   pcf2129rtcInstance.rtcInitialConfig();
 
   //Update RTC with current time
