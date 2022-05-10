@@ -3,7 +3,7 @@ name: PIO CI
 
 defaults:
   run:
-    working-directory: Nixie\ Clock/Code
+    working-directory: Nixie Clock/Code
     
 on:
   push:
