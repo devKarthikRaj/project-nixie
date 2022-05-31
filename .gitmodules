@@ -1,0 +1,3 @@
+[submodule "Nixie Clock/Code/lib/NixieDisplay-HAL"]
+	path = Nixie Clock/Code/lib/NixieDisplay-HAL
+	url = https://github.com/edward62740/NixieDisplay-HAL
