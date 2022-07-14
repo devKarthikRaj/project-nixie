@@ -1,0 +1,50 @@
+#######################################
+# Syntax Coloring Map For FaBoRTC-PCF2129-Library
+####################################### 
+
+#######################################
+# Class (KEYWORD1)
+#######################################
+
+FaBoRTC_PCF2129	KEYWORD1
+DateTime	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################	
+
+searchDevice	KEYWORD2
+configure	KEYWORD2
+getSeconds	KEYWORD2
+setSeconds	KEYWORD2
+getMinutes	KEYWORD2
+setMinutes	KEYWORD2
+getHours	KEYWORD2
+setHours	KEYWORD2
+getDays	KEYWORD2
+setDays	KEYWORD2
+getWeekdays	KEYWORD2
+setWeekdays	KEYWORD2
+getMonths	KEYWORD2
+setMonths	KEYWORD2
+getYears	KEYWORD2
+setYears	KEYWORD2
+now	KEYWORD2
+setDate	KEYWORD2
+set12mode	KEYWORD2
+set24mode	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+PCF2129_SLAVE_ADDRESS	LITERAL1
+PCF2129_CONTROL_REGISTERS	LITERAL1
+PCF2129_CONTROL_12_24	LITERAL1
+PCF2129_SECONDS	LITERAL1
+PCF2129_MINUTES	LITERAL1
+PCF2129_HOURS	LITERAL1
+PCF2129_DAYS	LITERAL1
+PCF2129_WEEKDAYS	LITERAL1
+PCF2129_MONTHS	LITERAL1
+PCF2129_YEARS	LITERAL1
